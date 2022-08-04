@@ -1,0 +1,7 @@
+name: 'openbook_qa'
+type: 'mul'
+path: 'bloom/openbookqa_main'
+file-pattern:
+  test: "**/test.jsonl"
+  validation: "**/validation.jsonl"
+micro_batch_size: 18

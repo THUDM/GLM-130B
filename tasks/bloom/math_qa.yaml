@@ -1,0 +1,7 @@
+name: 'math_qa'
+type: 'mul'
+path: 'bloom/math_qa'
+file-pattern:
+  validation: "**/validation.jsonl"
+  test: "**/test.jsonl"
+micro_batch_size: 6

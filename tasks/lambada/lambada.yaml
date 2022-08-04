@@ -1,0 +1,12 @@
+name: "LAMBADA"
+type: "gen"
+module: "tasks.lambada.task.LAMBADA"
+path: "lambada/lambada"
+file-pattern:
+  test: "**/test.jsonl"
+  validation: "**/validation.jsonl"
+
+sampling_strategy: "BeamSearchStrategy"
+num_beams: 16
+max_gen_length: 5
+use_task_mask: true

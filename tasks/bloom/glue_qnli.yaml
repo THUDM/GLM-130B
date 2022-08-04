@@ -1,0 +1,6 @@
+name: 'glue_qnli'
+type: 'mul'
+path: 'bloom/glue_qnli'
+file-pattern:
+  validation: "**/validation.jsonl"
+micro_batch_size: 6

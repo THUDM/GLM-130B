@@ -1,0 +1,4 @@
+name: 'AFQMC'
+type: 'mul'
+path: 'CLUE/afqmc'
+micro_batch_size: 16

@@ -1,0 +1,4 @@
+name: 'CLUEWSC2020'
+type: 'mul'
+path: 'CLUE/cluewsc'
+micro_batch_size: 18

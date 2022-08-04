@@ -1,0 +1,6 @@
+name: 'pubmed_qa'
+type: 'mul'
+path: 'bloom/pubmed_qa_pqa_labeled'
+file-pattern:
+  train: "**/train.jsonl"
+micro_batch_size: 2

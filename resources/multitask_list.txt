@@ -1,0 +1,70 @@
+super_glue/wsc.fixed
+winogrande/winogrande_xl
+super_glue/rte
+glue/mrpc
+glue/qqp
+paws/labeled_final
+ai2_arc/ARC_Challenge
+ai2_arc/ARC_Easy
+kilt_tasks/hotpot_qa
+trivia_qa/unfiltered
+web_questions
+wiki_qa
+adversarial_qa/dbidaf
+adversarial_qa/dbert
+adversarial_qa/droberta
+duorc/SelfRC
+duorc/ParaphraseRC
+ropes
+squad_v2
+super_glue/record
+quoref
+tydiqa
+cos_e/v1.11
+cosmos_qa
+dream
+openbookqa/main
+qasc
+quail
+quarel
+quartz
+race/high
+race/middle
+sciq
+social_i_qa
+super_glue/boolq
+super_glue/multirc
+wiki_hop/original
+wiqa
+piqa
+amazon_polarity
+app_reviews
+imdb
+rotten_tomatoes
+yelp_review_full
+super_glue/copa
+hellaswag
+common_gen
+wiki_bio
+cnndailymail/3.0.0
+gigaword
+multi_news
+samsum
+xsum
+ag_news
+dbpedia_14
+trec
+super_glue/wic
+tacred
+conll04 (joint entity relation extraction)
+nyt29 (joint entity relation extraction)
+ace2005 (joint entity relation extraction)
+ade (joint entity relation extraction)
+conll03 (named entity recognition)
+ontonotes (named entity recognition)
+genia (named entity recognition)
+conll05 (semantic role labeling)
+conll12 (semantic role labeling)
+propbank (semantic role labeling)
+ace05 (event extraction)
+multi_woz_2.1 (dialogue state tracking)

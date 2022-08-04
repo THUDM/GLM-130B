@@ -1,0 +1,4 @@
+name: 'C3'
+type: 'mul'
+path: 'CLUE/c3'
+micro_batch_size: 2

@@ -1,0 +1,6 @@
+name: 'superglue_axb'
+type: 'mul'
+path: 'bloom/super_glue_axb'
+file-pattern:
+  test: "**/test.jsonl"
+micro_batch_size: 16

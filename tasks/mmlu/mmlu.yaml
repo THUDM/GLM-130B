@@ -1,0 +1,10 @@
+name: "MMLU"
+type: "mul"
+module: "tasks.mmlu.task.MMLU"
+path: "MMLU"
+file-pattern:
+  stem: "stem/*.json"
+  social_sciences: "social_sciences/*.json"
+  humanities: "humanities/*.json"
+  other: "other/*.json"
+micro-batch-size: 1

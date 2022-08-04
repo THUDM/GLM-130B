@@ -1,0 +1,4 @@
+name: 'CSL'
+type: 'mul'
+path: 'CLUE/csl'
+micro_batch_size: 3

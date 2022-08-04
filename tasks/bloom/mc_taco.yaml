@@ -1,0 +1,6 @@
+name: 'mc_taco'
+type: 'gen'
+path: 'bloom/mc_taco'
+file-pattern:
+  validation: "**/validation_pp.jsonl"
+  test: "**/test_pp.jsonl"

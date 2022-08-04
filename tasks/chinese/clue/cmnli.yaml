@@ -1,0 +1,4 @@
+name: 'CMNLI'
+type: 'mul'
+path: 'CLUE/cmnli'
+micro_batch_size: 16
