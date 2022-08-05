@@ -345,7 +345,10 @@ We compare GLM-130B to the largest existing Chinese monolingual language model E
 ## Acknowledgement
 
 This project is supported by the National Science Foundation for Distinguished Young Scholars (No. 61825602). 
-   
+
+<details>
+<summary><b>Full List of Contributors</b></summary>
+
 ### Lead Contributors
 [Aohan Zeng (Tsinghua KEG)](https://github.com/Sengxian), [Xiao Liu (Tsinghua KEG)](https://github.com/xiao9905)
 
@@ -367,6 +370,8 @@ Zhipu.AI
 
 ### Project Leader
 [Jie Tang (Tsinghua KEG & BAAI)](http://keg.cs.tsinghua.edu.cn/jietang/)
+
+</details>
 
 ## License
 
