@@ -358,6 +358,9 @@ At test time, in zero-shot learning setting, the aim is to assign a test image t
 
 ## 致谢
 这一项目由国家自然科学基金国家杰出青年科学基金项目（No. 61825602）支持。 
+   
+<details>
+<summary><b>完整致谢名单</b></summary>
 
 ### 学生负责人
 [曾奥涵（清华大学计算机系知识工程实验室）](https://github.com/Sengxian)，[刘潇（清华大学计算机系知识工程实验室）](https://github.com/xiao9905)
@@ -380,4 +383,6 @@ At test time, in zero-shot learning setting, the aim is to assign a test image t
 
 ### 项目总负责
 [唐杰（清华大学计算机系知识工程实验室 & 北京智源人工智能研究院）](http://keg.cs.tsinghua.edu.cn/jietang/)
+   
+</details>
 
