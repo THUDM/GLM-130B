@@ -356,11 +356,10 @@ At test time, in zero-shot learning setting, the aim is to assign a test image t
 |:--:| 
 *部分CLUE和FewCLUE基准数据集的零点性能。跟随ERNIE Titan 3.0的做法，我们报告了开发数据集的结果。除了DRCD和CMRC2018的报告EM外，其他数据集报告Acc.* |
 
-## 致谢
-这一项目由国家自然科学基金国家杰出青年科学基金项目（No. 61825602）支持。 
-   
 <details>
-<summary><b>完整致谢名单</b></summary>
+<summary><b>致谢</b></summary>
+   
+这一项目由国家自然科学基金国家杰出青年科学基金项目（No. 61825602）支持。 
 
 ### 学生负责人
 [曾奥涵（清华大学计算机系知识工程实验室）](https://github.com/Sengxian)，[刘潇（清华大学计算机系知识工程实验室）](https://github.com/xiao9905)
