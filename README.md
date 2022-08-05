@@ -340,14 +340,10 @@ We compare GLM-130B to the largest existing Chinese monolingual language model E
 |:--:| 
 | *Zero-shot performance on part of CLUE and FewCLUE benchmark datasets. Following ERNIE Titan 3.0, we report results on dev datasets. Except for DRCD and CMRC2018's reporting EM, other datasets report Acc.* |
 
-
-
-## Acknowledgement
+<details>
+<summary><b>Acknowledgement</b></summary>
 
 This project is supported by the National Science Foundation for Distinguished Young Scholars (No. 61825602). 
-
-<details>
-<summary><b>Full List of Contributors</b></summary>
 
 ### Lead Contributors
 [Aohan Zeng (Tsinghua KEG)](https://github.com/Sengxian), [Xiao Liu (Tsinghua KEG)](https://github.com/xiao9905)
