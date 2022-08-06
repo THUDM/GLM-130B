@@ -38,7 +38,7 @@ Set `CHECKPOINT_PATH` in `configs/model_glm_130b.sh` to the path of the extracte
 ### Left-To-Right Generation / Blank Filling
 
 ```bash
-bash scripts/generation.sh  --input-source interactive
+bash scripts/generate.sh --input-source interactive
 ```
 
 You can also specify an input file by `--input-source input.txt`.
@@ -343,6 +343,7 @@ We compare GLM-130B to the largest existing Chinese monolingual language model E
 <details>
 <summary><b>Acknowledgement</b></summary>
 
+<br/>
 This project is supported by the National Science Foundation for Distinguished Young Scholars (No. 61825602). 
 
 ### Lead Contributors
