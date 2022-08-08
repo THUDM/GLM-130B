@@ -40,7 +40,7 @@ tar xvf glm-130b-sat.tar
 ### 自回归文本生成 / 中间文本填空
 
 ```bash
-bash scripts/generation.sh --input-source interactive
+bash scripts/generate.sh --input-source interactive
 ```
 
 你也可以通过 `--input-source input.txt` 指定一个输入文件。
