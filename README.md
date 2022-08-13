@@ -309,7 +309,7 @@ We test GLM-130B on a wide range of different downstream tasks. Note that we are
 #### Language Modeling (LAMBADA)
 Language modeling tests a language model's intrinsic ability to predict the next word given its prefix context. We take [LAMBADA](https://aclanthology.org/P16-1144/), a challenging zero-shot last word prediction task widely adopted in evaluating existing large-scale language models.
 
-We plot zero-shot LAMBADA (En) performance of GLM-130B, together with GPT-3 175B, OPT 175B, and BLOOM 176B (OPT and BLOOM's intermediate results are taken from [BLOOM's eval repository](https://github.com/bigscience-workshop/evaluation-results/tree/676f6a8cf27d4df30b073fb490deb9e359da64aa)). Compared to the other three GPT-style models attending to context autoregressively, we prsent two versions of GLM-130B:
+We plot zero-shot LAMBADA (En) performance of GLM-130B, together with GPT-3 175B, OPT 175B, and BLOOM 176B (OPT and BLOOM's intermediate results are taken from [BLOOM's eval repository](https://github.com/bigscience-workshop/evaluation-results/tree/676f6a8cf27d4df30b073fb490deb9e359da64aa)). Compared to the other three GPT-style models attending to context autoregressively, we present two versions of GLM-130B:
 
 * **GLM-130B (bi)** has bidirectional attention over the prefix context
 * **GLM-130B (uni)** follows the conventional GPT style to attend to the prefix context autoregressively
