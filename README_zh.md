@@ -263,15 +263,7 @@ word_embedding = word_embedding * α + word_embedding.detach() * (1 - α)
 
 #### 自监督预训练
 
-我们对GLM-130B进行了网络爬取语料组合的预训练，其中大部分（2.5T中的2.2T）来自开放可获取的数据。详细的统计数字列在下面的表格中。
-
-| 数据集                                                                            | 语言 | 原始大小 |
-|------------------------------------------------------------------------------------|----------|----------|
-| [Pile](https://arxiv.org/pdf/2101.00027.pdf)                                       | 英文  | 1.2T     |
-| [WudaoCorpus](https://www.sciencedirect.com/science/article/pii/S2666651021000152) | 中文  | 1.0T     |
-| BaiduBaike                                                                         | 中文  | 86.2G    |
-| Zhihu                                                                              | 中文  | 130.3G   |
-| BaiduZhidao                                                                        | 中文  | 40.7G    |
+我们在2.5T网络爬取的语料上，对GLM-130B进行了预训练，包括英文1.2T来自Pile的语料和1.3T中文语料.
 
 #### 多任务指令预训练（Multi-Task Instruction Pre-Training，MIP）
 
@@ -327,8 +319,8 @@ At test time, in zero-shot learning setting, the aim is to assign a test image t
 
 我们绘制了GLM-130B的零样本LAMBADA（En）性能，以及GPT-3 175B、OPT 175B和BLOOM 176B（OPT和BLOOM的中间结果取自[BLOOM的评估库](https://github.com/bigscience-workshop/evaluation-results/tree/676f6a8cf27d4df30b073fb490deb9e359da64aa)）。与其他三个使用上下文自回归的GPT式模型相比，我们提出了GLM-130B的两个版本。
 
-**GLM-130B (bi)**对前缀上下文有双向的关注。
-**GLM-130B (uni)**遵循传统的GPT风格，对前缀语境进行自回归注意力。
+* **GLM-130B (bi)**对前缀上下文有双向的关注。
+* **GLM-130B (uni)**遵循传统的GPT风格，对前缀语境进行自回归注意力。
 
 如图所示，双向注意力可以用较少的模型参数达到更好的性能。
 
