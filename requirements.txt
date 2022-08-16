@@ -3,3 +3,4 @@ icetk
 apex
 scipy
 dataclass_wizard
+cpm_kernels
