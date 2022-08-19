@@ -50,4 +50,5 @@ class GenerationTaskConfig(BaseConfig):
     max_gen_length: int = 128
 
     def __post_init__(self):
-        assert self.micro_batch_size == 1, "Only support micro batch size = 1 for generation task"
+        pass
+        # assert self.micro_batch_size == 1, "Only support micro batch size = 1 for generation task"
