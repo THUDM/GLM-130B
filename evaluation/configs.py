@@ -8,6 +8,7 @@ from typing import Optional, List, Dict
 class TaskType(Enum):
     MULTICHOICE = "mul"
     GENERATION = "gen"
+    LANGUAGE_MODEL = "lm"
     OTHER = "other"
 
 
@@ -51,3 +52,11 @@ class GenerationTaskConfig(BaseConfig):
 
     def __post_init__(self):
         assert self.micro_batch_size == 1, "Only support micro batch size = 1 for generation task"
+
+
+@dataclass
+class LanguageModelTaskConfig(BaseConfig):
+    module = "evaluation.LanguageModelTask"
+    metrics: List[str] = field(default_factory=lambda: ["PPL"])
+
+    generation_length: int = 256  # Generated length in each window
