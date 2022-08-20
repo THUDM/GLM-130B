@@ -55,9 +55,6 @@ def batch_filling_sequence(
             logits = logits[torch.arange(batch_size), context_lengths - 1]
         else:
             logits = logits[:, -1]
-        # if torch.distributed.get_rank() == 0:
-        #     breakpoint()
-        # torch.distributed.barrier()
         counter += 1
         index = counter
         # sampling
@@ -66,11 +63,12 @@ def batch_filling_sequence(
             tokens = tokens.reshape(batch_size, num_beams, -1)
             mems = mems.reshape(mems.shape[0], batch_size, num_beams, mems.shape[-2], mems.shape[-1])
         tokens, mems = strategy.forward(logits, tokens, mems)
-        if len(tokens.shape) == 3:
+        if len(tokens.shape) == 3 and num_beams == 1:
             num_beams = tokens.shape[1]
             position_ids = position_ids.unsqueeze(1).expand(batch_size, num_beams, -1).reshape(batch_size * num_beams, -1)
+            attention_mask_shape = attention_mask.shape[-3:]
             attention_mask = attention_mask.unsqueeze(1).expand(batch_size, num_beams, -1, -1, -1).reshape(
-                batch_size * num_beams, -1, -1, -1)
+                batch_size * num_beams, *attention_mask_shape)
         if strategy.is_done:
             break
     return strategy.finalize(tokens, mems)
@@ -159,12 +157,19 @@ class ModelForEvaluation(torch.nn.Module):
 
         output_targets = []
         context_length = seqs.shape[1]
-        for line in output:
-            line = line.tolist()
-            unfinished = line.index(-1) if -1 in line else len(line)
-            if line[unfinished - 1] in strategy.end_tokens:
-                unfinished -= 1
-            line = line[context_length:unfinished]
-            output_targets.append(line)
-
+        for lines in output:
+            output_target = []
+            if not isinstance(lines, list):
+                lines = [lines]
+            for line in lines:
+                line = line.tolist()
+                unfinished = line.index(-1) if -1 in line else len(line)
+                if line[unfinished - 1] in strategy.end_tokens:
+                    unfinished -= 1
+                line = line[context_length:unfinished]
+                output_target.append(line)
+            if not return_all_beams:
+                output_targets.append(output_target[0])
+            else:
+                output_targets.append(output_target)
         return output_targets
