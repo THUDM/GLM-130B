@@ -7,6 +7,9 @@ from .layers import QuantizedRowParallelLinear
 def quantize(model, weight_bit_width):
     """Replace fp16 linear with quantized linear"""
 
+    if torch.distributed.get_rank() == 0:
+        print(f"> Quantizing model weight to {weight_bit_width} bits")
+
     for layer in model.transformer.layers:
         layer.attention.query_key_value = QuantizedColumnParallelLinear(
             weight_bit_width=weight_bit_width,
