@@ -9,7 +9,6 @@ from typing import List, Tuple
 from SwissArmyTransformer import mpu
 from evaluation.model import batch_filling_sequence
 from generation import BeamSearchStrategy, BaseStrategy
-from generation import BeamSearchStrategy
 from SwissArmyTransformer.generation.utils import timed_name, generate_continually
 from initialize import initialize, initialize_model_and_tokenizer
 

@@ -124,7 +124,7 @@ class BeamSearchStrategy:
 
         probs = F.softmax(next_token_scores, dim=-1)
         if self.deterministic:
-            if mems.shape[2] < self.num_beams:  # First token
+            if num_beams < self.num_beams:  # First token
                 probs = probs[..., :vocab_size]
             next_tokens = torch.topk(probs, k=(max(1, len(self.end_tokens)) + 1) * self.num_beams).indices  # [2*nb]
         else:
