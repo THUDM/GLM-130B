@@ -16,7 +16,7 @@ GLM-130B is an open bilingual (English & Chinese) bidirectional dense model with
 - **Reproducibility:** all results (30+ tasks) can be easily reproduced with open-sourced code and model checkpoints.
 - **Cross-Platform:** supports training and inference on NVIDIA, Hygon DCU, Ascend 910, and Sunway (Will be released soon).
 
-For smaller models, please find monolingual GLM (English: 10B/2B/515M/410M/335M/110M, Chinese: 10B/335M) and an 1B multilingual GLM (104 languages).
+For smaller models, please find [monolingual GLMs](https://github.com/THUDM/GLM) (English: 10B/2B/515M/410M/335M/110M, Chinese: 10B/335M) and an [1B multilingual GLM](https://github.com/THUDM/Multilingual-GLM) (104 languages).
 
 ## Getting Started
 
