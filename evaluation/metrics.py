@@ -1,7 +1,11 @@
-import string
 import re
+import math
+import string
 import functools
 
+import numpy as np
+
+from typing import Tuple, List
 from collections import Counter
 
 from SwissArmyTransformer import get_tokenizer
@@ -79,4 +83,9 @@ def qa_evaluate(predictions, examples, metric):
 qa_exact_match = functools.partial(qa_evaluate, metric=exact_match_score)
 qa_f1 = functools.partial(qa_evaluate, metric=f1_score)
 
-DEFAULT_METRICS = {"EM": qa_exact_match, "F1": qa_f1, "Accuracy": accuracy_metric}
+
+def calculate_perplexity(loss: List[float], data):
+    return math.exp(min(20, np.sum(loss) / data[0]["num_original_tokens"]))
+
+
+DEFAULT_METRICS = {"EM": qa_exact_match, "F1": qa_f1, "Accuracy": accuracy_metric, "PPL": calculate_perplexity}

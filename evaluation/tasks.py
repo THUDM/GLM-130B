@@ -13,9 +13,9 @@ from SwissArmyTransformer.generation.sampling_strategies import BaseStrategy
 from SwissArmyTransformer.tokenization.icetk_glm_130B.ice_tokenizer import _IceTokenizer
 
 from generation import BeamSearchStrategy
-from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig
+from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig, LanguageModelTaskConfig
 from .model import ModelForEvaluation
-from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset
+from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset
 from .utils import build_data_loader, gather_result, print_rank_0
 from .metrics import DEFAULT_METRICS
 
@@ -205,3 +205,17 @@ class MultiChoiceTask(BaseTask, ABC):
     def predict_single_batch(self, batch) -> List[int]:
         log_probs = self.model.cond_log_prob(batch)
         return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
+
+
+class LanguageModelTask(BaseTask, ABC):
+    config: LanguageModelTaskConfig
+
+    @classmethod
+    def config_class(cls):
+        return LanguageModelTaskConfig
+
+    def build_dataset(self, relative_path):
+        return LanguageModelTaskDataset(join(self.config.path, relative_path), self.config)
+
+    def predict_single_batch(self, batch) -> List[float]:
+        return self.model.calculate_loss(batch)

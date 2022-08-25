@@ -3,6 +3,7 @@ import torch
 from typing import List, Union
 
 from SwissArmyTransformer.generation.autoregressive_sampling import filling_sequence
+from SwissArmyTransformer.mpu import vocab_parallel_cross_entropy
 
 
 class ModelForEvaluation(torch.nn.Module):
@@ -86,3 +87,24 @@ class ModelForEvaluation(torch.nn.Module):
             output_targets.append(line)
 
         return output_targets if return_all_beams else output_targets[0]
+
+    def calculate_loss(self, batch) -> List[float]:
+        tokens, position_ids, attention_mask = self.process_data(batch)
+        targets, loss_masks = (
+            batch["targets"].to(device=torch.cuda.current_device()).long(),
+            batch["loss_masks"].to(device=torch.cuda.current_device()).long(),
+        )
+
+        original_parallel_output = self.model.transformer.parallel_output
+        self.model.transformer.parallel_output = True
+        self.model.eval()
+
+        with torch.no_grad():
+            logits, *output_per_layers = self.model(tokens, position_ids, attention_mask, log_attention_weights=None)
+            losses = vocab_parallel_cross_entropy(logits.contiguous().float(), targets)
+            loss = torch.sum(losses * loss_masks, dim=-1)
+
+        self.model.transformer.parallel_output = original_parallel_output
+
+        # return list(zip(loss.tolist(), loss_masks.sum(dim=-1).tolist()))
+        return loss.tolist()

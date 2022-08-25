@@ -7,7 +7,7 @@
 
 # GLM-130B: An Open Bilingual Pre-Trained Model
 
-GLM-130B is an open bilingual (English & Chinese) bidirectional dense model with 130 billion parameters, pre-trained using the algorithm of [General Language Model (GLM)](https://aclanthology.org/2022.acl-long.26). It is designed to support inference tasks with the 130B parameters on **a single A100 (40G * 8)** or **V100 (32G * 8) server**. As of July 3rd, 2022, GLM-130B has been trained on over 400 billion text tokens (200B each for Chinese and English) and it has the following unique features:
+GLM-130B is an open bilingual (English & Chinese) bidirectional dense model with 130 billion parameters, pre-trained using the algorithm of [General Language Model (GLM)](https://aclanthology.org/2022.acl-long.26). It is designed to support inference tasks with the 130B parameters on **a single A100 (40G * 8)** or **V100 (32G * 8) server**. With INT4 quantization, the  hardware requirements can further be reduced to **a single server with 4 * RTX 3090 (24G)** with **almost no performance degradation**. As of July 3rd, 2022, GLM-130B has been trained on over 400 billion text tokens (200B each for Chinese and English) and it has the following unique features:
  
 - **Bilingual:** supports both English and Chinese. 
 - **Performance (EN):** better than GPT-3 175B (+4.0%), OPT-175B (+5.5%), and BLOOM-176B (+13.0%) on LAMBADA and slightly better than GPT-3 175B (+0.9%) on MMLU.
@@ -16,17 +16,35 @@ GLM-130B is an open bilingual (English & Chinese) bidirectional dense model with
 - **Reproducibility:** all results (30+ tasks) can be easily reproduced with open-sourced code and model checkpoints.
 - **Cross-Platform:** supports training and inference on NVIDIA, Hygon DCU, Ascend 910, and Sunway (Will be released soon).
 
+## News
+
+- 🌟 **[2022.08.24]** We are proud to publish the quantized version for GLM-130B.  While preserving the activation precision as FP16, the model weights can be quantized to as low as **INT4 with almost no degradation of performance**, further reducing the hardware requirements of the GLM-130B to **a single server with 4 * RTX 3090 (24G)**! See [Quantization of GLM-130B](docs/quantization.md) for details.
+
 For smaller models, please find [monolingual GLMs](https://github.com/THUDM/GLM) (English: 10B/2B/515M/410M/335M/110M, Chinese: 10B/335M) and an [1B multilingual GLM](https://github.com/THUDM/Multilingual-GLM) (104 languages).
 
 ## Getting Started
 
 ### Environment Setup
 
+#### Hardware
+
+| **Hardware**    | **GPU Memory** | **Quantization** | **Weight Offload** |
+| --------------- | -------------- | ---------------- | ------------------ |
+| 8 * A100        | 40 GB          | No               | No                 |
+| 8 * V100        | 32 GB          | No               | Yes (BMInf)        |
+| 8 * V100        | 32 GB          | INT8             | No                 |
+| 8 * RTX 3090    | 24 GB          | INT8             | No                 |
+| 4 * RTX 3090    | 24 GB          | INT4             | No                 |
+| 8 * RTX 2080 Ti | 11 GB          | INT4             | Yes (BMInf)        |
+
+It is recommended to use the an A100 (40G * 8) server, as all GLM-130B evaluation results (~30 tasks) reported can be easily reproduced with a single A100 server in about half a day. With INT8/INT4 quantization, efficient inference on **a single server with 4 * RTX 3090 (24G)** is possible, see [Quantization of GLM-130B](docs/quantization.md) for details. Combining quantization and weight offloading techniques, GLM-130B can also be inferenced on servers with even smaller GPU memory, e.g. 8 * RTX 2080 Ti (11G), see [Low-Resource Inference](docs/low-resource-inference.md) for details.
+
+#### Software
+
 The GLM-130B code is built on the top of [SAT](https://github.com/THUDM/SwissArmyTransformer). We recommend using [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to manage your environment and installing additional dependencies via `pip install -r requirements.txt`. Here are the recommended environment configurations:
 
 - Python 3.9+ / CUDA 11+ / PyTorch 1.10+ / DeepSpeed 0.6+ / Apex (**installation with CUDA and C++ extensions is required, see [here](https://github.com/NVIDIA/apex/#linux)**)
-    
-It is recommended to use the an A100 (40G * 8) server, as all GLM-130B evaluation results (~30 tasks) reported can be easily reproduced with a single A100 server in about half a day. GLM-130B can also be inferenced on servers with smaller GPU memory, such as a V100 (32G * 8) server. See [Low-Resource Inference](docs/low-resource-inference.md) for details.
+- SwissArmyTransformer>=0.2.11 is required for quantization
 
 Download the GLM-130B’s model checkpoint from [here](https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform?usp=sf_link), make sure all 60 chunks are downloaded completely, then use the following command to merge them into a single archive file and extract it:
 
@@ -35,7 +53,14 @@ cat glm-130b-sat.tar.part_* > glm-130b-sat.tar
 tar xvf glm-130b-sat.tar
 ```
 
-Set `CHECKPOINT_PATH` in `configs/model_glm_130b.sh` to the path of the extracted folder. Since the checkpoint file is up to 260G, it is recommended to use the SSD or RAM disk to reduce the checkpoint loading time.
+Set `CHECKPOINT_PATH` in `configs/model_glm_130b.sh` to the path of the extracted folder. Since the checkpoint file is up to 260G, it is recommended to use the SSD or RAM disk to reduce the checkpoint loading time. Since the checkpoint we distribute is in 8-way tensor parallel, a conversion scripts is also provided if you need to change the tensor parallel dimension.
+
+```bash
+python tools/convert_tp.py \
+    --input-folder <SRC_CKPT_PATH>  \
+    --output-folder <DST_CKPT_PATH> \
+    --target-tp <TARGET_TP>
+```
 
 ### Left-To-Right Generation / Blank Filling
 
@@ -132,7 +157,7 @@ See [Evaluate Your Own Tasks](docs/evaluate-your-own-tasks.md) for details on ho
 
 ### 2.5X faster Inference using FasterTransformer
 
-- By adapting the GLM-130B model to [FasterTransfomer](https://github.com/NVIDIA/FasterTransformer), a highly optimized transformer model library by NVIDIA, we can reach up to 2.5X speedup on generation, see [Inference with FasterTransformer](docs/inference-with-fastertransformer.md) for details.
+By adapting the GLM-130B model to [FasterTransfomer](https://github.com/NVIDIA/FasterTransformer), a highly optimized transformer model library by NVIDIA, we can reach up to 2.5X speedup on generation, see [Inference with FasterTransformer](docs/inference-with-fastertransformer.md) for details.
 
 ## What is GLM-130B
 

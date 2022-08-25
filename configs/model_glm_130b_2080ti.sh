@@ -10,6 +10,9 @@ MODEL_ARGS="--model-parallel-size ${MP_SIZE} \
             --max-sequence-length 2048 \
             --tokenizer-type icetk-glm-130B \
             --layernorm-order post \
+            --quantization-bit-width 4 \
             --load ${CHECKPOINT_PATH} \
             --skip-init \
-            --fp16"
+            --fp16 \
+            --bminf \
+            --bminf-memory-limit 6"
