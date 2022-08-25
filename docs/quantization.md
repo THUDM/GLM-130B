@@ -4,7 +4,7 @@
 
 > Please note that SwissArmyTransformer>=0.2.11 is required for quantization
 
-Set `CHECKPOINT_PATH` in `configs/model_glm_130b_{int4/int8}.sh` to your local checkpoint folder. The model will first be initialized from the FP16 checkpoint on the CPU memory, then dynamically quantized and transferred to the GPU memory. So please make sure you have enough CPU memory (>260GB) to store the FP16 model weights.
+Set `CHECKPOINT_PATH` in `configs/model_glm_130b_{int4/int8}.sh` to your local checkpoint folder. The model will be first initialized from the FP16 checkpoint on the CPU memory, then dynamically quantized and transferred to the GPU memory. So please make sure you have enough CPU memory (>260GB) to store the FP16 model weights.
 
 You need to pay attention to the tensor parallel dimension of the model checkpoint, we only provide the checkpoint in 8-way tensor parallel, i.e. 8 GPUs store a whole model. If you need to do inference on a small number of GPUs, e.g. 4 * RTX 3090 GPUs with INT4 precision, you first need to convert the checkpoint to 4-way tensor parallel using the following command and modify `MP_SIZE` in corresponding model config file.
 
@@ -25,7 +25,7 @@ Finally, change the model config file from `configs/model_glm_130b.sh` to `confi
 | INT8 | 44.709   | 80.206      | 10.904              | 10.763                | 18.994       |
 | INT4 | 44.801   | 79.468      | 11.167              | 11.046                | 19.535       |
 
-## Benchmark
+## Space and Speed Benchmark
 
 > TODO: More benchmark to add (8 * V100, 8 * 3090, 4 * A100)
 
@@ -41,7 +41,7 @@ The above results in the table is tests with SAT. Using FasterTransformer can sp
 
 Typical methods quantize both model weights and activations to INT8, enabling the INT8 matrix multiplication kernel for efficiency. However, we found that there are outliers in GLM-130B's activations, making it hard to reduce the precision of activations. 
 
-Almost at the same time, researchers from [Meta AI](https://arxiv.org/abs/2208.07339) also found the emergent outliers issue in large-scale transformers (>6.8B), which is consistent with our observations on GLM-130B. They conducted an in-depth analysis and found that the outliers make up only about 0.1% of all feature dimensions, so it's possible to make a decomposition for matrix multiplication that focuses on high precision multiplication for these particular dimensions.
+Concurrently, researchers from [Meta AI](https://arxiv.org/abs/2208.07339) also found the emergent outliers issue in large-scale transformers (>6.8B), which is consistent with our observations on GLM-130B. They conducted an in-depth analysis and found that the outliers make up only about 0.1% of all feature dimensions, so it's possible to make a decomposition for matrix multiplication that focuses on high precision multiplication for these particular dimensions.
 
 | ![](media/16613396005977.jpg) | 
 |:--:| 
