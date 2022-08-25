@@ -47,7 +47,7 @@ def initialize_model_and_tokenizer(args):
     model = GLM130B(args).half()
 
     if args.from_quantized_checkpoint:
-        assert not args.bminf and args.quantization_bit_width is not None
+        assert args.quantization_bit_width is not None
         # Quantize model before moving to GPU
         model = quantize(model, args.quantization_bit_width)
 
@@ -59,15 +59,18 @@ def initialize_model_and_tokenizer(args):
     if torch.distributed.get_rank() == 0:
         print(f"> Checkpoint loaded in {time.time() - start:.1f}s")
 
+    if args.quantization_bit_width is not None and not args.from_quantized_checkpoint:
+        # Quantize model before moving to GPU
+        model = quantize(model, args.quantization_bit_width)
+
     if args.bminf:
         import bminf
 
+        if torch.distributed.get_rank() == 0:
+            print(f"> BMInf activated, memory limit: {args.bminf_memory_limit} GB")
         with torch.cuda.device(args.device):
             model = bminf.wrapper(model, quantization=False, memory_limit=args.bminf_memory_limit << 30)
     else:
-        if args.quantization_bit_width is not None and not args.from_quantized_checkpoint:
-            # Quantize model before moving to GPU
-            model = quantize(model, args.quantization_bit_width)
         model = model.to(args.device)
 
     torch.cuda.empty_cache()

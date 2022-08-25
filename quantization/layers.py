@@ -30,8 +30,8 @@ class QuantizedColumnParallelLinear(ColumnParallelLinear):
             if weight_bit_width == 4:
                 self.weight = compress_int4_weight(self.weight)
 
-        self.weight = Parameter(self.weight, requires_grad=False)
-        self.weight_scale = Parameter(self.weight_scale, requires_grad=False)
+        self.weight = Parameter(self.weight.to(kwargs["device"]), requires_grad=False)
+        self.weight_scale = Parameter(self.weight_scale.to(kwargs["device"]), requires_grad=False)
 
     def forward(self, input_):
         # Set up backprop all-reduce.
@@ -67,8 +67,8 @@ class QuantizedRowParallelLinear(RowParallelLinear):
             if weight_bit_width == 4:
                 self.weight = compress_int4_weight(self.weight)
 
-        self.weight = Parameter(self.weight, requires_grad=False)
-        self.weight_scale = Parameter(self.weight_scale, requires_grad=False)
+        self.weight = Parameter(self.weight.to(kwargs["device"]), requires_grad=False)
+        self.weight_scale = Parameter(self.weight_scale.to(kwargs["device"]), requires_grad=False)
 
     def forward(self, input_):
         # Set up backprop all-reduce.
