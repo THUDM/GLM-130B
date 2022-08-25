@@ -35,9 +35,9 @@ For smaller models, please find [monolingual GLMs](https://github.com/THUDM/GLM)
 | 8 * V100        | 32 GB          | INT8             | No                 |
 | 8 * RTX 3090    | 24 GB          | INT8             | No                 |
 | 4 * RTX 3090    | 24 GB          | INT4             | No                 |
-| 8 * RTX 2080 Ti | 11 GB          | INT4             | Yes (BMInf)        |
+| 8 * RTX 2080 Ti | 11 GB          | INT4             | No        |
 
-It is recommended to use the an A100 (40G * 8) server, as all GLM-130B evaluation results (~30 tasks) reported can be easily reproduced with a single A100 server in about half a day. With INT8/INT4 quantization, efficient inference on **a single server with 4 * RTX 3090 (24G)** is possible, see [Quantization of GLM-130B](docs/quantization.md) for details. Combining quantization and weight offloading techniques, GLM-130B can also be inferenced on servers with even smaller GPU memory, e.g. 8 * RTX 2080 Ti (11G), see [Low-Resource Inference](docs/low-resource-inference.md) for details.
+It is recommended to use the an A100 (40G * 8) server, as all GLM-130B evaluation results (~30 tasks) reported can be easily reproduced with a single A100 server in about half a day. With INT8/INT4 quantization, efficient inference on **a single server with 4 * RTX 3090 (24G)** is possible, see [Quantization of GLM-130B](docs/quantization.md) for details. Combining quantization and weight offloading techniques, GLM-130B can also be inferenced on servers with even smaller GPU memory, see [Low-Resource Inference](docs/low-resource-inference.md) for details.
 
 #### Software
 

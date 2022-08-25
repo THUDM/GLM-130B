@@ -27,12 +27,15 @@ Finally, change the model config file from `configs/model_glm_130b.sh` to `confi
 
 ## Space and Speed Benchmark
 
-> TODO: More benchmark to add (8 * V100, 8 * 3090, 4 * A100)
+> TODO: More benchmark to add
 
-| **Hardware** | **GPU Memory** | **Precison** | **512** | **1024** | **2048** |
-| ------------ | -------------- | ------------ | ------- | -------- | -------- |
+| **Hardware** | **GPU Memory** | **Precison** | **512**  | **1024** | **2048** |
+| ------------ | -------------- | ------------ | -------- | -------- | -------- |
 | 8 * A100     | 40 GB          | FP16         | 45.21 s  | 89.00 s  | 179.22 s |
+| 8 * V100     | 32 GB          | INT8         | 106.35 s | 216.50 s | 449.17 s |
 | 4 * RTX 3090 | 24 GB          | INT4         | 138.66 s | 292.69 s | 649.64 s |
+| 8 * RTX 2080 Ti | 11 GB | INT4 | 117.39 s | 240.96 s | 528.66 s |
+
 
 The above results in the table is tests with SAT. Using FasterTransformer can speed up more than 2X, as detailed in [Inference with FasterTransformer](../docs/inference-with-fastertransformer.md).
 
