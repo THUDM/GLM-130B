@@ -4,6 +4,7 @@ import json
 import numpy as np
 import torch
 
+from typing import List
 from abc import ABC, abstractmethod
 from scipy.linalg import block_diag
 
@@ -46,10 +47,16 @@ class EvaluationDataset(torch.utils.data.Dataset, ABC):
         self.gmask_id = tokenizer.get_command("[gMASK]")
 
         self.data = []
-        with open(os.path.join(path), "r", encoding="utf-8") as file:
-            for line in file:
-                item = json.loads(line)
-                self.data.append(self.process_single_item(item))
+        if path.endswith("jsonl"):
+            with open(os.path.join(path), "r", encoding="utf-8") as file:
+                for line in file:
+                    item = json.loads(line)
+                    self.data.extend(self.process_single_item(item))
+        elif path.endswith("json"):
+            with open(os.path.join(path), "r", encoding="utf-8") as file:
+                dataset = json.load(file)
+            for item in dataset:
+                self.data.extend(self.process_single_item(item))
 
     @property
     def has_collate_fn(self) -> bool:
@@ -59,7 +66,7 @@ class EvaluationDataset(torch.utils.data.Dataset, ABC):
         return None
 
     @abstractmethod
-    def process_single_item(self, item) -> dict:
+    def process_single_item(self, item, **kwargs) -> List[dict]:
         pass
 
     def __len__(self):
@@ -69,12 +76,12 @@ class EvaluationDataset(torch.utils.data.Dataset, ABC):
 class GenerationTaskDataset(EvaluationDataset):
     config: GenerationTaskConfig
 
-    def process_single_item(self, item):
+    def process_single_item(self, item, **kwargs):
         text, targets = get_tokenized_input(item, "inputs"), get_tokenized_input(item, "targets")
         if len(text) + self.config.max_gen_length + 2 > self.config.max_seq_length:
             text_length = self.config.max_seq_length - self.config.max_gen_length - 2
             text = text[len(text) - text_length : len(text)]
-        return {"text": text, "targets": targets}
+        return [{"text": text, "targets": targets, **kwargs}]
 
     @staticmethod
     def build_generation_sample(text, max_gen_length, use_task_mask, unidirectional=True):
@@ -124,7 +131,8 @@ class GenerationTaskDataset(EvaluationDataset):
             use_task_mask=self.config.use_task_mask,
             unidirectional=self.config.unidirectional,
         )
-        sample["targets"] = [np.array(target, dtype=self.dtype) for target in item["targets"]]
+        if "target" in item:
+            sample["targets"] = [np.array(target, dtype=self.dtype) for target in item["targets"]]
         return sample
 
 
@@ -165,7 +173,7 @@ class MultiChoiceTaskDataset(EvaluationDataset):
             "is_single_token": self.is_single_token,
         }
 
-    def process_single_item(self, item):
+    def process_single_item(self, item, **kwargs):
         text, choices, label = get_tokenized_input(item, "inputs"), get_tokenized_input(item, "choices"), item["label"]
 
         tgt_seq_length = sum([len(choice) for choice in choices])
@@ -185,11 +193,12 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         if tgt_seq_length != 1:
             self.is_single_token = False
 
-        return {
+        return [{
             "text": text,
             "choices": choices,
             "label": label,
-        }
+            **kwargs
+        }]
 
     @staticmethod
     def build_multiple_choice_sample(text, choices, is_single_token, unified_multitask_encoding=False):
@@ -216,6 +225,8 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         attention_mask = [np.ones((len(token), len(token)), dtype=np.int64)]
 
         for choice in choices:
+            if not choice:
+                choice = [tokenizer.get_command('eop')]
             position_id = np.concatenate(
                 (
                     position_id,

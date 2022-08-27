@@ -1,5 +1,5 @@
 MODEL_TYPE="glm-130b"
-CHECKPOINT_PATH="/thudm/workspace/hanyu/SwissArmyTransformer/data/ckpt/iter_0049300"
+CHECKPOINT_PATH="/zhangpai21/checkpoints/glm-130b-sat"
 MP_SIZE=8
 MODEL_ARGS="--model-parallel-size ${MP_SIZE} \
             --num-layers 70 \
