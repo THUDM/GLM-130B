@@ -9,10 +9,9 @@ from glob import glob
 from os.path import join, relpath
 from collections import defaultdict
 
-from SwissArmyTransformer.generation.sampling_strategies import BaseStrategy
 from SwissArmyTransformer.tokenization.icetk_glm_130B.ice_tokenizer import _IceTokenizer
 
-from generation import BeamSearchStrategy
+from generation import BaseStrategy, BeamSearchStrategy
 from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig, LanguageModelTaskConfig
 from .model import ModelForEvaluation
 from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset
@@ -171,9 +170,11 @@ class GenerationTask(BaseTask, ABC):
 
         end_tokens = [tokenizer.get_command("eop"), tokenizer.get_command("eos")]
         if self.config.sampling_strategy == "BaseStrategy":
-            self.strategy = BaseStrategy(temperature=1.0, top_k=1, end_tokens=end_tokens)
+            self.strategy = BaseStrategy(batch_size=self.config.micro_batch_size, temperature=1.0, top_k=1,
+                                         end_tokens=end_tokens)
         elif self.config.sampling_strategy == "BeamSearchStrategy":
             self.strategy = BeamSearchStrategy(
+                self.config.micro_batch_size,
                 self.config.num_beams,
                 length_penalty=self.config.length_penalty,
                 consider_end=True,
@@ -188,8 +189,9 @@ class GenerationTask(BaseTask, ABC):
     def predict_single_batch(self, batch) -> List[List[int]]:
         # micro batch size = 1 for generation task,
         # but we still need to return a list of predictions for consistency
-        output = self.model.generate_text(batch, self.strategy, return_all_beams=False)
-        return [output]
+        output = self.model.generate_text(batch, self.strategy, return_all_beams=False,
+                                          max_gen_length=self.config.max_gen_length)
+        return output
 
 
 class MultiChoiceTask(BaseTask, ABC):
