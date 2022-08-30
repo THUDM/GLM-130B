@@ -1,7 +1,11 @@
 <img src="resources/7D6433A42D189E2E6FBC62BE066BCE91.png">
 
 <p align="center">
-   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/hanyullai/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 💬 <a href="https://groups.google.com/g/glm-130b-forum" target="_blank">Google Group</a> or <a href="https://github.com/Xiao9905" target="_blank">Wechat Group</a> • 📃 Paper (Coming soon) <br>
+   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/THUDM/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 📃 Paper (Coming soon) <br>
+</p>
+
+<p align="center">
+   💬 <a href="https://groups.google.com/g/glm-130b-forum" target="_blank">Google Group</a> (Updates) or <a href="https://join.slack.com/t/glm-130b/shared_invite/zt-1f2ih11xy-EAuDComTAr~XVB3MywE9Cg" target="_blank">Slack channel</a> (Discussions)
 </p>
 
 # GLM-130B: An Open Bilingual Pre-Trained Model
