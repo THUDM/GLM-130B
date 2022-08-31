@@ -189,8 +189,7 @@ class GenerationTask(BaseTask, ABC):
     def predict_single_batch(self, batch) -> List[List[int]]:
         # micro batch size = 1 for generation task,
         # but we still need to return a list of predictions for consistency
-        output = self.model.generate_text(batch, self.strategy, return_all_beams=False,
-                                          max_gen_length=self.config.max_gen_length)
+        output = self.model.generate_text(batch, self.strategy, return_all_beams=False)
         return output
 
 
