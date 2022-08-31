@@ -114,14 +114,13 @@ def fill_blanks(raw_text: str, model, tokenizer, strategy) -> Tuple[List[str], L
             ),
         )
         if isinstance(output, torch.Tensor):  # different strategies
-            output = list(output)
-        else:
-            output = output[0]
+            output = output.tolist()
+        output = output[0]  # batch_size = 1
         output_list.extend(output)
 
         # clip -1s and fill back generated things into seq
         for i in range(len(output_list)):
-            output = output_list[i].tolist()
+            output = output_list[i].tolist() if isinstance(output_list[i], torch.Tensor) else output_list[i]
             try:
                 unfinished = output.index(-1)
             except ValueError:

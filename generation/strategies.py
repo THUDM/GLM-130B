@@ -21,6 +21,7 @@ class BaseStrategy:
         return self._is_done.all()
 
     def forward(self, logits, tokens, mems, temperature=None):
+        logits = logits.view(-1, logits.size(-1))
         batch_size = tokens.shape[0]
         if temperature is None:
             temperature = self.temperature
@@ -38,7 +39,7 @@ class BaseStrategy:
                 pred[i] = -1
             elif pred[i].item() in self.end_tokens:
                 self._is_done[i] = True
-        tokens = torch.cat((tokens, pred.view(tokens.shape[0], 1)), dim=1)
+        tokens = torch.cat((tokens, pred.view(tokens.shape[:-1] + (1,))), dim=-1)
         return tokens, mems
 
     def finalize(self, tokens, mems):
@@ -94,10 +95,6 @@ class BeamSearchStrategy:
         return self._is_done.all()
 
     def forward(self, logits, tokens, mems):
-        if len(logits.shape) == 2:
-            logits = logits.unsqueeze(1)
-            tokens = tokens.unsqueeze(1)
-            mems = mems.unsqueeze(2)
         batch_size, num_beams, vocab_size = logits.shape
         seq_len = tokens.shape[-1]
         logits = logits.float()

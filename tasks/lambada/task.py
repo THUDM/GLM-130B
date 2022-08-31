@@ -28,7 +28,8 @@ class LAMBADA(GenerationTask):
                     invalid_slices.append(pp[0])
                 banned_prefix.append(pp)
             self.strategy = BeamSearchStrategyForLAMBADA(
-                self.config.num_beams,
+                batch_size=self.config.micro_batch_size,
+                num_beams=self.config.num_beams,
                 length_penalty=self.config.length_penalty,
                 consider_end=True,
                 end_tokens=self.strategy.end_tokens,
