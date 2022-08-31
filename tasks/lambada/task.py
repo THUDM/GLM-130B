@@ -46,10 +46,17 @@ class LAMBADA(GenerationTask):
 
     def predict_single_batch(self, batch):
         # micro batch size = 1 here, but we still need to return a list of predictions for consistency
-        outputs: List[List[int]] = self.model.generate_text(batch, self.strategy, return_all_beams=True)
-        for output in outputs:
-            text = self.tokenizer.tokenizer.decode(output).strip()
-            spl = text.split(" ")
-            if len(spl) >= 2 and spl[1] in punctuation:
-                return [self.get_first_word_tokens(output)]
-        return [self.get_first_word_tokens(outputs[0])]
+        outputs_batch: List[List[List[int]]] = self.model.generate_text(batch, self.strategy, return_all_beams=True)
+        predictions = []
+        for outputs in outputs_batch:
+            found = False
+            for output in outputs:
+                text = self.tokenizer.tokenizer.decode(output).strip()
+                spl = text.split(" ")
+                if len(spl) >= 2 and spl[1] in punctuation:
+                    predictions.append(self.get_first_word_tokens(output))
+                    found = True
+                    break
+            if not found:
+                predictions.append(self.get_first_word_tokens(outputs[0]))
+        return predictions
