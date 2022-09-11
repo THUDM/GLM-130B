@@ -187,8 +187,6 @@ class GenerationTask(BaseTask, ABC):
             raise ValueError(f"unknown strategy {self.config.sampling_strategy}")
 
     def predict_single_batch(self, batch) -> List[List[int]]:
-        # micro batch size = 1 for generation task,
-        # but we still need to return a list of predictions for consistency
         output = self.model.generate_text(batch, self.strategy, return_all_beams=False)
         return output
 
