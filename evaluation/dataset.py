@@ -269,8 +269,11 @@ class MultiChoiceTaskDataset(EvaluationDataset):
 
 class LanguageModelTaskDataset(EvaluationDataset):
     config: LanguageModelTaskConfig
+    left_weights: List[int]
+    weights: List[int]
 
     def process_single_file(self, path):
+        num_sequences = []
         with open(os.path.join(path), "r", encoding="utf-8") as file:
             raw_text = file.read()
             tokens = self.tokenizer.tokenize(raw_text)
@@ -287,6 +290,9 @@ class LanguageModelTaskDataset(EvaluationDataset):
                     ),
                 }
             )
+            num_sequences.append(self.data[-1]["num_sequences"])
+        self.weights = list(accumulate(num_sequences))
+        self.left_weights = [0] + self.weights[:-1]
 
     def process_single_item(self, item):
         pass
@@ -295,15 +301,17 @@ class LanguageModelTaskDataset(EvaluationDataset):
         return self.data[0]["num_sequences"]
 
     def __getitem__(self, idx):
+        document_idx = bisect_right(self.weights, idx)
+        idx = idx - self.left_weights[document_idx]
         start_idx = idx * self.config.generation_length
         end_idx = start_idx + self.config.max_seq_length - 1  # for additional [gMASK]
-        tokens = self.data[0]["raw_text"][start_idx:end_idx]
+        tokens = self.data[document_idx]["raw_text"][start_idx:end_idx]
 
         mask_id = self.gmask_id if self.config.use_task_mask else self.mask_id
         sop_id = self.tokenizer.get_command("sop")
 
         if idx == 0 or self.config.unidirectional:
-            prompt, text = tokens[:1], tokens[1:]
+            prompt, text = [], tokens
         else:
             prompt_length = self.config.max_seq_length - 1 - self.config.generation_length
             prompt, text = tokens[:prompt_length], tokens[prompt_length:]
