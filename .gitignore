@@ -3,3 +3,6 @@ __pycache__
 samples
 .DS_Store
 .idea
+log/
+tasks/crow/
+tasks/StereoSet-master/

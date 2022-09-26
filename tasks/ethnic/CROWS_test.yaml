@@ -3,6 +3,6 @@ type: "mul"
 path: "CROWS"
 module:  "evaluation.CrowsPairTask"
 file-pattern:
-  test: "**/CROWS_dataset.jsonl"
+  test: "**/CROWS_20.jsonl"
 
 micro-batch-size: 1

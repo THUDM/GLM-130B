@@ -1,0 +1,209 @@
+WARNING:torch.distributed.run:
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+WARNING: No training data specified
+WARNING: No training data specified
+using world size: 8 and model-parallel size: 8 
+> padded vocab (size: 150528) with 0 dummy tokens (new size: 150528)
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+> initializing model parallel with size 8
+> Loading task configs
+    Task CROWS_test loaded from config tasks/ethnic/CROWS_test.yaml
+> Successfully load 1 task
+> Set tokenizer as a icetk-glm-130B tokenizer! Now you can get_tokenizer() everywhere.
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 5; 79.17 GiB total capacity; 11.44 GiB already allocated; 125.88 MiB free; 11.44 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 6; 79.17 GiB total capacity; 11.44 GiB already allocated; 175.88 MiB free; 11.44 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 3; 79.17 GiB total capacity; 11.44 GiB already allocated; 149.88 MiB free; 11.44 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 0; 79.17 GiB total capacity; 11.63 GiB already allocated; 155.88 MiB free; 11.63 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 1; 79.17 GiB total capacity; 11.44 GiB already allocated; 149.88 MiB free; 11.44 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 2; 79.17 GiB total capacity; 11.44 GiB already allocated; 59.88 MiB free; 11.44 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 4; 79.17 GiB total capacity; 11.44 GiB already allocated; 59.88 MiB free; 11.44 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 58, in main
+    model, tokenizer = initialize_model_and_tokenizer(args)
+  File "/mnt/yrfs/xuyifan/GLM-130B/initialize.py", line 47, in initialize_model_and_tokenizer
+    model = GLM130B(args).half()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 351, in __init__
+    self.get_mixin("glu-deepnorm").reinit()
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/model/official/glm130B_model.py", line 110, in reinit
+    layer.mlp.dense_h_to_4h = ColumnParallelLinear(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/SwissArmyTransformer/mpu/layers.py", line 219, in __init__
+    self.weight = Parameter(torch.empty(self.output_size_per_partition,
+RuntimeError: CUDA out of memory. Tried to allocate 192.00 MiB (GPU 7; 79.17 GiB total capacity; 11.81 GiB already allocated; 103.88 MiB free; 11.81 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+ERROR:torch.distributed.elastic.multiprocessing.api:failed (exitcode: 1) local_rank: 0 (pid: 925250) of binary: /mnt/yrfs/qinkai/miniconda3/envs/largescale/bin/python
+Traceback (most recent call last):
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/bin/torchrun", line 33, in <module>
+    sys.exit(load_entry_point('torch==1.12.0', 'console_scripts', 'torchrun')())
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 345, in wrapper
+    return f(*args, **kwargs)
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/run.py", line 761, in main
+    run(args)
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/run.py", line 752, in run
+    elastic_launch(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 131, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 245, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/mnt/yrfs/xuyifan/GLM-130B/evaluate.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 925251)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 925252)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 925253)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[4]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 4 (local_rank: 4)
+  exitcode  : 1 (pid: 925254)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[5]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 5 (local_rank: 5)
+  exitcode  : 1 (pid: 925255)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[6]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 6 (local_rank: 6)
+  exitcode  : 1 (pid: 925256)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[7]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 7 (local_rank: 7)
+  exitcode  : 1 (pid: 925257)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2022-09-27_01:45:43
+  host      : node14
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 925250)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
