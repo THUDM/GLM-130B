@@ -1,0 +1,9 @@
+name: "StereoSet"
+type: "mul"
+path: "StereoSet"
+module: "evaluation.StereoSetTask"
+use_task_mask: True
+file-pattern:
+  test: "**/SS_dataset.jsonl"
+
+micro-batch-size: 64

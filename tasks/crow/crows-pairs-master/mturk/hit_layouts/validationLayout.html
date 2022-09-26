@@ -1,0 +1,146 @@
+<!-- You must include this JavaScript file -->
+<script src="https://assets.crowd.aws/crowd-html-elements.js"></script>
+<!-- For the full list of available Crowd HTML Elements and their input/output documentation,
+      please refer to https://docs.aws.amazon.com/sagemaker/latest/dg/sms-ui-template-reference.html -->
+<!-- You must include crowd-form so that your task submits answers to MTurk -->
+<crowd-form answer-format="flatten-objects">
+    <font face="Verdana, Geneva, sans-serif" size="2.9">
+    <p style="border:3px; border-style:solid; border-color:#287EC7; padding: 1em;">
+       <i>Please <u>read the full instructions</u> carefully before starting. And optionally, to ensure that you get paid fairly, you can report your actual working time at the bottom of each HIT.</i>
+
+       <br><br>
+
+       <b>Given these two sentences, please answer the 4 following questions,</b>
+       <br>
+       <u>Sentence 1</u>: ${disadvantaged}<br>
+       <u>Sentence 2</u>: ${advantaged}
+    </p>
+    
+    <p>
+        <b>1. Does Sentence 1 clearly demonstrate or clearly violate a cultural stereotype that you recognize?</b>
+        <br>
+        <crowd-radio-group>
+            <crowd-radio-button name="yesBias1" value="yesBias1">Demonstrates stereotype</crowd-radio-button>
+            <crowd-radio-button name="noBias1" value="noBias1">Violates stereotype</crowd-radio-button>
+            <crowd-radio-button name="neitherBias1" value="neitherBias1">Neither</crowd-radio-button>
+        </crowd-radio-group>
+    </p>
+
+    <p>
+        <b>2. Does Sentence 2 clearly demonstrate or clearly violate a cultural stereotype that you recognize?</b><br>
+        <crowd-radio-group>
+            <crowd-radio-button name="yesBias2" value="yesBias2">Demonstrates stereotype</crowd-radio-button>
+            <crowd-radio-button name="noBias2" value="noBias2">Violates stereotype</crowd-radio-button>
+            <crowd-radio-button name="neitherBias2" value="neitherBias2">Neither</crowd-radio-button>
+        </crowd-radio-group>
+    </p>
+    
+    <p>
+        <b>3. Are the two sentences identical except for the words indicating which person or group is being discussed?</b> For example this is a valid pair: "John ran into his old football friend" / "Jane ran into her old football friend."<br>
+        <crowd-radio-group>
+            <crowd-radio-button name="yesMin" value="yesMin">Yes</crowd-radio-button>
+            <crowd-radio-button name="notMin" value="notMin">No</crowd-radio-button>
+            <!-- <crowd-radio-button name="sent2" value="sent2">Not applicable</crowd-radio-button> -->
+        </crowd-radio-group>
+    </p>
+    
+    <p>
+        <b>4. What attribute of the person or group is the stereotype, or violation of a stereotype, about?</b> For example, it could be a racial stereotype about Asian Americans, or maybe a stereotype about sanitation workers (occupation). If the stereotype is about multiple attributes, please pick the one you think is most relevant.
+        <crowd-radio-group name="bias_type">
+            <crowd-radio-button name="race-color" value="race-color" id="race-color">Race/Color</crowd-radio-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <crowd-radio-button name="sexual-orientation" value="sexual-orientation" id="sexual-orientation">Sexual orientation</crowd-radio-button><br/>
+
+            <crowd-radio-button name="gender" value="gender" id="gender">Gender/Gender identity or expression</crowd-radio-button>
+
+            <crowd-radio-button name="age" value="age" id="age">Age</crowd-radio-button><br/>
+
+            <crowd-radio-button name="religion" value="religion" id="religion">Religion</crowd-radio-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <crowd-radio-button name="nationality" value="nationality" id="nationality">Nationality or citizenship status</crowd-radio-button><br/>
+
+            <crowd-radio-button name="disability" value="disability" id="disability">Disability (mental and physical)</crowd-radio-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <crowd-radio-button name="physical-appearance" value="physical-appearance" id="physical-appearance">Physical apperance</crowd-radio-button><br/>
+
+            <crowd-radio-button name="socioeconomic" value="socioeconomic" id="socioeconomic">Socioeconomic status/Occupation</crowd-radio-button>&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <crowd-radio-button name="none" value="none" id="none">None of the above</crowd-radio-button>
+        </crowd-radio-group>
+    </p>
+    </font>
+    <br><br><br>
+    
+    <!-- Stanford Fair Work -->
+    <script src="https://fairwork.stanford.edu/fairwork.js?aws_account=131875121573"></script> 
+    <short-instructions>
+        <font face="Verdana, Geneva, sans-serif" size="2.9">
+        <p>
+            Given two sentences, 
+            <ol>
+                <li>Tell us if you think Sentence 1 either clearly demonstrates or clearly violates a cultural stereotype that you recognize. </li> 
+                <li>Tell us if you think Sentence 2 either clearly demonstrates or clearly violates a cultural stereotype that you recognize. </li> 
+                <li>Determine if the two sentences are identical except for the words indicating which person or group is being discussed.</li>
+                <li>Select the attribute of the person or group that the stereotype, or violation of stereotype, is about.</li>
+            </ol>
+        </p>
+        </font>
+    </short-instructions>
+    
+    
+    <full-instructions header="Annotating Stereotypes">
+        <font face="Verdana, Geneva, sans-serif" size="2.9">
+        <p> The <a href="https://cds.nyu.edu/" target="_blank">New York University Center for Data Science</a> is collecting 
+        your answers to study machine understanding of English and to test the presence of social biases in AI models. Thank you 
+        for your help! </p>
+        
+        <h2>Checking for Stereotypes</h2>
+        <p>
+            For this task, you will be shown a pair of sentences. Your task is to,
+            <ol>
+                <li><font color="red">Decide if Sentence 1 either clearly demonstrates or clearly violate a US cultural stereotype that you recognize</font>.
+                    <ul>
+                        <li>A stereotype is clearly violated if the sentence uses a characteristic that wouldn’t normally be used when referring to the disadvantaged group. 
+                        For example, “Wang Fang was the best quarterback the school had seen in a decade” goes against the stereotype, 
+                        because Asian American's might not typically be considered especially athletic.</li>
+                        <li>The stereotype or violation of stereotype could be positive, negative, or neutral. “I’m sorry but those people are Middle Eastern so we should be cautious” has a negative stereotype. </li>
+                        <li>"He was devastated when he broke the heel of his Louboutin boots" is neutral and violates a stereotype.</li>
+                        <li>Note that a belief, or statement, about people that is definitely always true is not a stereotype.</li>
+                    </ul>
+                </li>
+                <li><font color="red">Decide if Sentence 2 either clearly demonstrate or clearly violate a US cultural stereotype</font>.</li>
+                <li>Next, <font color="red">determine if the two sentences are identical except for person or group being discussed,</font> 
+                    <ul>
+                        <li>Descriptive words like "wonderful" should not change or be introduced, neither should words like "not" be present in one sentence and not the other.</li>
+                        <ul><li>For example, "Jamal is a terrible father"/"John is a fantastic father" is an unacceptable pair because "terrible" is changed to "fantastic"</li>
+                        <li>Similarly, "Jamal is a not terrible father"/"John is a father" is an unacceptable pair because the word "not" is removed in Sentence 2.</li>
+                        <li>A valid example would be  "Jamal is a terrible father"/"John is a terrible father"</li></ul>
+                    </ul>
+                </li>
+                <li><font color="red">Select the attribute of the person or group that the stereotype, or violation of stereotype, is about.</font> We have listed the types in the <u>Selecting the Attributes</u> section below.</li>
+            </ol>
+        </p>
+
+        <h3>Selecting the Attributes</h3>
+        <p>
+            We provide 9 types of attributes you can select from,
+        <ul>
+            <li> Race/Color </li>
+            <li> Gender/Gender identity </li>
+            <li> Sexual orientation </li>
+            <li> Religion </li>
+            <li> Age </li>
+            <li> Nationality or citizenship status</li>
+            <li> Disability (mental and physical) </li>
+            <li> Physical appearance </li>
+            <li> Socioeconomic status/Occupation </li>
+        </ul>
+        </p>
+        For example, for the sentence pair "The new mosque was a welcome addition to the suburb"/"The new church was a welcome addition to the suburb" has the attribute <b>religion</b> (it also violates a stereotype).<br>
+        If more than one attribute is applicable, pick the one you think is most relevant to the sentence and stereotype. If you believe that none of the attributes fit, pick "None of the above".<br><br>
+
+        You can find descriptions of these attributes in our <a href="https://nyu-mll.github.io/nlu-debiasing-data/validation.html" 
+            target="_blank">FAQ page</a>. Please refer to this FAQ if you have other questions as well.
+    </font>
+    </full-instructions>
+</crowd-form>

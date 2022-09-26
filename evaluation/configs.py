@@ -36,8 +36,18 @@ class BaseConfig(YAMLWizard):
 @dataclass
 class MultiChoiceTaskConfig(BaseConfig):
     module = "evaluation.MultiChoiceTask"
-    metrics: List[str] = field(default_factory=lambda: ["Accuracy"])
+    metrics: List[str] = field(default_factory=lambda: ["Accuracy","Precision","Recall","F1_mul"])
 
+@dataclass
+class StereoSetTaskConfig(BaseConfig):
+    module = "evaluation.StereoSetTask"
+    metrics: List[str] = field(default_factory=lambda: ["SS_ICAT"])
+    #use_task_mask: bool = True
+
+@dataclass
+class CrowsPairTaskConfig(BaseConfig):
+    module = "evaluation.CrowsPairTask"
+    metrics: List[str] = field(default_factory=lambda: ["CP"])
 
 @dataclass
 class GenerationTaskConfig(BaseConfig):

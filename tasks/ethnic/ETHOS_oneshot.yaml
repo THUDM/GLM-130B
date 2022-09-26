@@ -1,0 +1,7 @@
+name: "ETHOS_oneshot"
+type: "mul"
+path: "ETHOS/oneshot"
+file-pattern:
+  test: "**/oneshot_all.jsonl"
+
+micro-batch-size: 64

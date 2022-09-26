@@ -15,6 +15,10 @@ from SwissArmyTransformer import get_tokenizer
 
 from .configs import BaseConfig, MultiChoiceTaskConfig, GenerationTaskConfig, LanguageModelTaskConfig
 from .utils import get_tokenized_input
+import torch
+def print_rank_0(*args, **kwargs):
+    if torch.distributed.get_rank() == 0:
+        print(*args, **kwargs)
 
 
 def pad_batch(tokens, position_ids, attention_mask, max_seq_length):
@@ -175,7 +179,6 @@ class MultiChoiceTaskDataset(EvaluationDataset):
 
     def process_single_item(self, item):
         text, choices, label = get_tokenized_input(item, "inputs"), get_tokenized_input(item, "choices"), item["label"]
-
         tgt_seq_length = sum([len(choice) for choice in choices])
         if tgt_seq_length == len(choices):
             # For single token, we only insert one [sop]
@@ -200,15 +203,19 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         }
 
     @staticmethod
-    def build_multiple_choice_sample(text, choices, is_single_token, unified_multitask_encoding=False):
+    def build_multiple_choice_sample(text, choices, is_single_token, unified_multitask_encoding=False,use_task_mask=False):
         tokenizer = get_tokenizer()
 
         sop_id = tokenizer.get_command("sop")
-        mask_id = tokenizer.get_command("[MASK]")
+        if use_task_mask == False:
+            mask_id = tokenizer.get_command("[MASK]")
+        else:
+            mask_id = tokenizer.get_command("[gMASK]")
 
         token = np.array(text, dtype=np.int64)
         target = np.array(text, dtype=np.int64)
         position_id = np.arange(len(text), dtype=np.int64)
+
         choice_target_id = []
 
         blank_filling = mask_id in text
@@ -224,14 +231,27 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         attention_mask = [np.ones((len(token), len(token)), dtype=np.int64)]
 
         for choice in choices:
-            position_id = np.concatenate(
+            if use_task_mask == False:
+                position_id = np.concatenate(
                 (
                     position_id,
                     [mask_position] * len(choice)
                     if blank_filling or not unified_multitask_encoding
                     else np.arange(mask_position, mask_position + len(choice), dtype=np.int64),
                 )
-            )
+                )
+            else:
+                position_id = np.concatenate(
+                (
+                    position_id,
+                    np.arange(division, division + len(choice), dtype=np.int64)
+                    if blank_filling or not unified_multitask_encoding
+                    else np.arange(mask_position, mask_position + len(choice), dtype=np.int64),
+                )
+                )
+
+            
+            
             choice_target_id.append(np.arange(len(token), len(token) + len(choice), dtype=np.int64))
             attention_mask.append(np.tril(np.ones((len(choice), len(choice)), dtype=np.int64)))
             token = np.concatenate((token, [sop_id], choice[:-1]))
@@ -239,7 +259,9 @@ class MultiChoiceTaskDataset(EvaluationDataset):
 
             if is_single_token:
                 break
-
+        
+        #if len(token)!=len(position_id) or len(position_id)!=len(attention_mask):
+            #print(len(token),len(position_id),)
         attention_mask = block_diag(*attention_mask)
         attention_mask[: len(token), :division] = 1
 
@@ -262,9 +284,121 @@ class MultiChoiceTaskDataset(EvaluationDataset):
             item["choices"],
             is_single_token=self.is_single_token,
             unified_multitask_encoding=self.config.use_multitask_encoding,
+            use_task_mask = self.config.use_task_mask
         )
         sample["label"] = item["label"]
         return sample
+
+class CrowsPairDataset(MultiChoiceTaskDataset):
+    config: MultiChoiceTaskConfig
+    def __init__(self, path, config: MultiChoiceTaskConfig):
+        self.is_single_token = True  # set to False later in process_single_item func
+        self.eval_data = []
+        super().__init__(path, config)
+    
+    def process_single_file(self, path):
+        with open(os.path.join(path), "r", encoding="utf-8") as file:
+            for line in file:
+                item = json.loads(line)
+                predict_dataset,eval_dataset = self.process_single_item(item)
+                self.data.append(predict_dataset)
+                self.eval_data.append(eval_dataset)
+
+    def process_single_item(self, item):
+        text, choices, label = get_tokenized_input(item, "inputs"), get_tokenized_input(item, "choices"), item["label"]
+        #"ID":example.ID,"bias_type":example.bias_type,"goal_label":goal_label
+        pair_ID,sent_ID,bias_type = item["pair_ID"],item["sent_ID"],item["bias_type"]
+        tgt_seq_length = sum([len(choice) for choice in choices])
+        if tgt_seq_length == len(choices):
+            # For single token, we only insert one [sop]
+            tgt_seq_length = 1
+
+        assert tgt_seq_length < self.config.max_seq_length
+        if len(text) + tgt_seq_length + 2 > self.config.max_seq_length:
+            text_length = self.config.max_seq_length - tgt_seq_length - 2
+            text = text[len(text) - text_length : len(text)]
+
+        assert not (
+            self.mask_id in text and self.config.use_multitask_encoding
+        ), "Unified multitask encoding don't support blank filling"
+
+        if tgt_seq_length != 1:
+            self.is_single_token = False
+
+        predict_dataset = {
+            "text": text,
+            "choices": choices,
+            "label": label,
+        }
+
+        eval_dataset = {
+            "text": text,
+            "choices": choices,
+            "label": label,
+            "pair_ID":pair_ID,
+            "sent_ID":sent_ID,
+            "bias_type":bias_type,
+        }
+
+        return predict_dataset,eval_dataset
+
+    
+
+
+class StereoSetDataset(MultiChoiceTaskDataset):
+    config: MultiChoiceTaskConfig
+    def __init__(self, path, config: MultiChoiceTaskConfig):
+        self.is_single_token = True  # set to False later in process_single_item func
+        self.eval_data = []
+        super().__init__(path, config)
+
+    def process_single_file(self, path):
+        with open(os.path.join(path), "r", encoding="utf-8") as file:
+            for line in file:
+                item = json.loads(line)
+                predict_dataset,eval_dataset = self.process_single_item(item)
+                self.data.append(predict_dataset)
+                self.eval_data.append(eval_dataset)
+
+    def process_single_item(self, item):
+        text, choices, label = get_tokenized_input(item, "inputs"), get_tokenized_input(item, "choices"), item["label"]
+        #"ID":example.ID,"bias_type":example.bias_type,"goal_label":goal_label
+        ID,bias_type,goal_label = item["ID"],item["bias_type"],item["goal_label"]
+        tgt_seq_length = sum([len(choice) for choice in choices])
+        if tgt_seq_length == len(choices):
+            # For single token, we only insert one [sop]
+            tgt_seq_length = 1
+
+        assert tgt_seq_length < self.config.max_seq_length
+        if len(text) + tgt_seq_length + 2 > self.config.max_seq_length:
+            text_length = self.config.max_seq_length - tgt_seq_length - 2
+            text = text[len(text) - text_length : len(text)]
+
+        assert not (
+            self.mask_id in text and self.config.use_multitask_encoding
+        ), "Unified multitask encoding don't support blank filling"
+
+        if tgt_seq_length != 1:
+            self.is_single_token = False
+
+        predict_dataset = {
+            "text": text,
+            "choices": choices,
+            "label": label,
+        }
+
+        eval_dataset = {
+            "text": text,
+            "choices": choices,
+            "label": label,
+            "ID":ID,
+            "bias_type":bias_type,
+            "goal_label":goal_label
+        }
+
+        return predict_dataset,eval_dataset
+
+    
 
 
 class LanguageModelTaskDataset(EvaluationDataset):

@@ -1,0 +1,76 @@
+WARNING:torch.distributed.run:
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+using world size: 8 and model-parallel size: 8 
+> padded vocab (size: 150528) with 0 dummy tokens (new size: 150528)
+> initializing model parallel with size 8
+> Loading task configs
+    Task ETHOS_fewshot_single loaded from config tasks/ethnic/ETHOS_fewshotsingle.yaml
+    Task ETHOS_oneshot loaded from config tasks/ethnic/ETHOS_oneshot.yaml
+    Task ETHOS_zeroshot loaded from config tasks/ethnic/ETHOS_zeroshot.yaml
+    Task ETHOS_fewshot_single loaded from config tasks/ethnic/ETHOS_fewshotmulti.yaml
+> Successfully load 4 tasks
+> Set tokenizer as a icetk-glm-130B tokenizer! Now you can get_tokenizer() everywhere.
+global rank 5 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_05_model_states.ptglobal rank 3 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_03_model_states.pt
+
+global rank 7 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_07_model_states.pt
+global rank 6 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_06_model_states.pt
+global rank 2 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_02_model_states.pt
+global rank 1 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_01_model_states.pt
+global rank 4 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_04_model_states.pt
+global rank 0 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_00_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_01_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_00_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_04_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_02_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_06_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_05_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_03_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_07_model_states.pt
+> Checkpoint loaded in 25.0s
+
+
+MultiChoiceTaskConfig(name='ETHOS_fewshot_single', type=<TaskType.MULTICHOICE: 'mul'>, path='data/ETHOS/fewshot', module=None, metrics=['F1_mul'], use_task_mask=False, use_multitask_encoding=False, unidirectional=False, max_seq_length=2048, file_pattern={'test': '**/fewshot_single.jsonl'}, micro_batch_size=32)
+Evaluating task ETHOS_fewshot_single:
+    Evaluating group test:
+        Finish fewshot_single.jsonl, F1_mul = 0.689
+Evaluation results of task ETHOS_fewshot_single:
+    Group test F1_mul: max = 0.689, median = 0.689, average = 0.689
+Finish task ETHOS_fewshot_single in 19.1s.
+
+
+MultiChoiceTaskConfig(name='ETHOS_oneshot', type=<TaskType.MULTICHOICE: 'mul'>, path='data/ETHOS/oneshot', module=None, metrics=['F1_mul'], use_task_mask=False, use_multitask_encoding=False, unidirectional=False, max_seq_length=2048, file_pattern={'test': '**/oneshot.jsonl'}, micro_batch_size=32)
+Evaluating task ETHOS_oneshot:
+    Evaluating group test:
+        Finish oneshot.jsonl, F1_mul = 0.727
+Evaluation results of task ETHOS_oneshot:
+    Group test F1_mul: max = 0.727, median = 0.727, average = 0.727
+Finish task ETHOS_oneshot in 17.2s.
+
+
+MultiChoiceTaskConfig(name='ETHOS_zeroshot', type=<TaskType.MULTICHOICE: 'mul'>, path='data/ETHOS/zeroshot', module=None, metrics=['F1_mul'], use_task_mask=False, use_multitask_encoding=False, unidirectional=False, max_seq_length=2048, file_pattern={'test': '**/zeroshot.jsonl'}, micro_batch_size=32)
+Evaluating task ETHOS_zeroshot:
+    Evaluating group test:
+        Finish zeroshot.jsonl, F1_mul = 0.303
+Evaluation results of task ETHOS_zeroshot:
+    Group test F1_mul: max = 0.303, median = 0.303, average = 0.303
+Finish task ETHOS_zeroshot in 12.8s.
+
+
+MultiChoiceTaskConfig(name='ETHOS_fewshot_single', type=<TaskType.MULTICHOICE: 'mul'>, path='data/ETHOS/fewshot', module=None, metrics=['F1_mul'], use_task_mask=False, use_multitask_encoding=False, unidirectional=False, max_seq_length=2048, file_pattern={'test': '**/fewshot_multi_small.jsonl'}, micro_batch_size=32)
+Evaluating task ETHOS_fewshot_single:
+    Evaluating group test:
+        Finish fewshot_multi_small.jsonl, F1_mul = 0.624
+Evaluation results of task ETHOS_fewshot_single:
+    Group test F1_mul: max = 0.624, median = 0.624, average = 0.624
+Finish task ETHOS_fewshot_single in 170.1s.
+Finish 4 tasks in 219.2s

@@ -1,0 +1,7 @@
+name: "ETHOS_zeroshot"
+type: "mul"
+path: "ETHOS/zeroshot"
+file-pattern:
+  test: "**/zeroshot_2000.jsonl"
+
+micro-batch-size: 128

@@ -44,7 +44,7 @@ class ModelForEvaluation(torch.nn.Module):
                 log_probs_single = []
                 for choice, choice_target_id in zip(choices, choice_target_ids):
                     tmp = output[choice_target_id, choice]
-                    log_probs_single.append(tmp.sum().tolist())
+                    log_probs_single.append(tmp.mean().tolist())
                 log_probs.append(log_probs_single)
         return log_probs
 

@@ -1,0 +1,8 @@
+name: "CROWS_test"
+type: "mul"
+path: "CROWS"
+module:  "evaluation.CrowsPairTask"
+file-pattern:
+  test: "**/CROWS_dataset.jsonl"
+
+micro-batch-size: 1

@@ -13,9 +13,9 @@ from SwissArmyTransformer.generation.sampling_strategies import BaseStrategy
 from SwissArmyTransformer.tokenization.icetk_glm_130B.ice_tokenizer import _IceTokenizer
 
 from generation import BeamSearchStrategy
-from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig, LanguageModelTaskConfig
+from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig, LanguageModelTaskConfig, StereoSetTaskConfig, CrowsPairTaskConfig
 from .model import ModelForEvaluation
-from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset
+from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset, StereoSetDataset, CrowsPairDataset
 from .utils import build_data_loader, gather_result, print_rank_0
 from .metrics import DEFAULT_METRICS
 
@@ -204,8 +204,142 @@ class MultiChoiceTask(BaseTask, ABC):
 
     def predict_single_batch(self, batch) -> List[int]:
         log_probs = self.model.cond_log_prob(batch)
+        print([np.argmax(log_probs_single).item() for log_probs_single in log_probs])
         return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
 
+class CrowsPairTask(BaseTask, ABC):
+    config: CrowsPairTaskConfig
+
+    @classmethod
+    def config_class(cls):
+        return CrowsPairTaskConfig
+
+    def build_dataset(self, relative_path):
+        return CrowsPairDataset(join(self.config.path, relative_path), self.config)
+
+    def predict_single_batch(self, batch) -> List[int]:
+        log_probs = self.model.cond_log_prob(batch)
+        #print("log\n",log_probs)
+        #print("res\n")
+        #print([np.argmax(log_probs_single).item() for log_probs_single in log_probs])
+        #return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
+        return log_probs
+
+    def evaluate(self):
+        dist.barrier()
+        start = time.time()
+        print_rank_0("\n")
+        print_rank_0(f"{self.config}")
+        print_rank_0(f"Evaluating task {self.config.name}:")
+
+        result_dict_all = {}
+
+        for group_name, filelist in self.file_groups.items():
+            print_rank_0(f"    Evaluating group {group_name}:")
+
+            result_dict_group = {}
+            for file in filelist:
+                dataset = self.build_dataset(file)
+                dataloader = build_data_loader(
+                    dataset,
+                    micro_batch_size=self.config.micro_batch_size,
+                    num_workers=1,
+                    drop_last=False,
+                    collate_fn=dataset.collate_fn if dataset.has_collate_fn else None,
+                )
+
+                prediction = []
+                with torch.no_grad():
+                    for _, batch in enumerate(dataloader):
+                        prediction.append(self.predict_single_batch(batch))
+
+                prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
+                for key, metric in self.metrics.items():
+                    result_list = metric(prediction, dataset.eval_data)
+                result_dict_group = (result_list, len(dataset))
+
+            result_dict_all[group_name] = result_dict_group
+            
+        print_rank_0(f"Evaluation results of task {self.config.name}:")
+        if self.verbose:
+            for group_name, result_dict_group in result_dict_all.items():
+                self.report_group_metrics(group_name, result_dict_group)
+
+        print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")
+
+    def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
+        print(result_dict_group)
+        print("\n crows-pair evaluation")
+
+class StereoSetTask(BaseTask, ABC):
+    config: StereoSetTaskConfig
+
+    @classmethod
+    def config_class(cls):
+        return StereoSetTaskConfig
+
+    def build_dataset(self, relative_path):
+        return StereoSetDataset(join(self.config.path, relative_path), self.config)
+
+    def predict_single_batch(self, batch) -> List[int]: 
+        log_probs = self.model.cond_log_prob(batch)
+        return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
+
+    def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
+        print("LMS")
+        for key,val in result_dict_group[0][0].items():
+            print_rank_0("cat:{key}  score:{score}".format(key=key,score = round(val, 3)))
+        print("SS")
+        for key,val in result_dict_group[0][1].items():
+            print_rank_0("cat:{key}  score:{score}".format(key=key,score = round(val, 3)))
+        print("ICAT")
+        for key,val in result_dict_group[0][2].items():
+            print_rank_0("cat:{key}  score:{score}".format(key=key,score = round(val, 3)))
+
+
+    def evaluate(self):
+        print_rank_0("\nThis is special for StereoSet evaluation")
+        dist.barrier()
+        start = time.time()
+        print_rank_0("\n")
+        print_rank_0(f"{self.config}")
+        print_rank_0(f"Evaluating task {self.config.name}:")
+
+        result_dict_all = {}
+
+        for group_name, filelist in self.file_groups.items():
+            print_rank_0(f"    Evaluating group {group_name}:")
+
+            result_dict_group = {}
+            for file in filelist:
+                dataset = self.build_dataset(file)
+                print(dataset)
+                dataloader = build_data_loader(
+                    dataset,
+                    micro_batch_size=self.config.micro_batch_size,
+                    num_workers=1,
+                    drop_last=False,
+                    collate_fn=dataset.collate_fn if dataset.has_collate_fn else None,
+                )
+
+                prediction = []
+                with torch.no_grad():
+                    for _, batch in enumerate(dataloader):
+                        prediction.append(self.predict_single_batch(batch))
+
+                prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
+                for key, metric in self.metrics.items():
+                    result_list = metric(prediction, dataset.eval_data)
+                result_dict_group = (result_list, len(dataset))
+
+            result_dict_all[group_name] = result_dict_group
+            
+        print_rank_0(f"Evaluation results of task {self.config.name}:")
+        if self.verbose:
+            for group_name, result_dict_group in result_dict_all.items():
+                self.report_group_metrics(group_name, result_dict_group)
+
+        print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")
 
 class LanguageModelTask(BaseTask, ABC):
     config: LanguageModelTaskConfig
@@ -219,3 +353,4 @@ class LanguageModelTask(BaseTask, ABC):
 
     def predict_single_batch(self, batch) -> List[float]:
         return self.model.calculate_loss(batch)
+

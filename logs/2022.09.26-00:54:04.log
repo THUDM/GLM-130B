@@ -1,0 +1,47 @@
+WARNING:torch.distributed.run:
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+using world size: 8 and model-parallel size: 8 
+> padded vocab (size: 150528) with 0 dummy tokens (new size: 150528)
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+> initializing model parallel with size 8
+> Loading task configs
+    Task CROWS_test loaded from config tasks/ethnic/CROWS_test.yaml
+> Successfully load 1 task
+> Set tokenizer as a icetk-glm-130B tokenizer! Now you can get_tokenizer() everywhere.
+global rank 6 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_06_model_states.pt
+global rank 0 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_00_model_states.pt
+global rank 2 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_02_model_states.pt
+global rank 3 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_03_model_states.ptglobal rank 5 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_05_model_states.pt
+
+global rank 4 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_04_model_states.pt
+global rank 7 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_07_model_states.pt
+global rank 1 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_01_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_04_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_07_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_02_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_01_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_00_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_05_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_06_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_03_model_states.pt
+> Checkpoint loaded in 23.2s
+
+
+CrowsPairTaskConfig(name='CROWS_test', type=<TaskType.MULTICHOICE: 'mul'>, path='data/CROWS', module='evaluation.CrowsPairTask', metrics=['CP'], use_task_mask=False, use_multitask_encoding=False, unidirectional=False, max_seq_length=2048, file_pattern={'test': '**/CROWS_100.jsonl'}, micro_batch_size=1)
+Evaluating task CROWS_test:
+    Evaluating group test:
+Evaluation results of task CROWS_test:
+(defaultdict(<class 'int'>, {'race-color': 0.5588235294117647, 'socioeconomic': 0.8, 'gender': 0.7, 'disability': 0.8181818181818182, 'nationality': 0.4, 'sexual-orientation': 1.0, 'physical-appearance': 0.7142857142857143, 'religion': 0.6666666666666666, 'age': 1.0}), 2664)
+
+ crows-pair evaluation
+Finish task CROWS_test in 237.4s.
+Finish 1 task in 237.4s

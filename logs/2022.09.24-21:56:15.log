@@ -1,0 +1,170 @@
+WARNING:torch.distributed.run:
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+            from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0    from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0
+from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+        from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0
+
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+    from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 7, in <module>
+    from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask
+      File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+    from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTaskfrom .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask    
+
+from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+      File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+    from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+    from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+    from evaluation import BaseConfig, ModelForEvaluation, DEFAULT_CLASS, print_rank_0
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/__init__.py", line 3, in <module>
+    from .metrics import DEFAULT_METRICS    
+from .metrics import DEFAULT_METRICS
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+    result 50
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+             from .metrics import DEFAULT_METRICSresult 50
+ 
+                 File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+  from .metrics import DEFAULT_METRICS ^
+
+         SyntaxErrorresult 50
+ : from .metrics import DEFAULT_METRICS    invalid syntax ^
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+
+
+     SyntaxError result 50
+:        File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+invalid syntax          
+ from .metrics import DEFAULT_METRICS result 50
+  
+     ^
+   SyntaxError   File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+ :      invalid syntax^
+ result 50
+
+SyntaxError     :   invalid syntax  
+ ^
+   SyntaxError : ^
+invalid syntax
+SyntaxError: invalid syntax
+    from .metrics import DEFAULT_METRICS
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+    result 50
+           ^
+SyntaxError: invalid syntax
+    from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 20, in <module>
+    from .metrics import DEFAULT_METRICS
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/metrics.py", line 136
+    result 50
+           ^
+SyntaxError: invalid syntax
+ERROR:torch.distributed.elastic.multiprocessing.api:failed (exitcode: 1) local_rank: 0 (pid: 451925) of binary: /mnt/yrfs/qinkai/miniconda3/envs/largescale/bin/python
+Traceback (most recent call last):
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/bin/torchrun", line 33, in <module>
+    sys.exit(load_entry_point('torch==1.12.0', 'console_scripts', 'torchrun')())
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 345, in wrapper
+    return f(*args, **kwargs)
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/run.py", line 761, in main
+    run(args)
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/run.py", line 752, in run
+    elastic_launch(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 131, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 245, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/mnt/yrfs/xuyifan/GLM-130B/evaluate.py FAILED
+------------------------------------------------------------
+Failures:
+[1]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 451926)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[2]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 2 (local_rank: 2)
+  exitcode  : 1 (pid: 451928)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[3]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 451929)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[4]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 4 (local_rank: 4)
+  exitcode  : 1 (pid: 451932)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[5]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 5 (local_rank: 5)
+  exitcode  : 1 (pid: 451934)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[6]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 6 (local_rank: 6)
+  exitcode  : 1 (pid: 451936)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+[7]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 7 (local_rank: 7)
+  exitcode  : 1 (pid: 451937)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2022-09-24_21:56:31
+  host      : node14
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 451925)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
