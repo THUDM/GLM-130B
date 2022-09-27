@@ -222,6 +222,7 @@ class CrowsPairTask(BaseTask, ABC):
         return log_probs
 
     def CrowsPairMetric(self,predictions,examples):
+        print_rank_0("Special metric for CrowsPair")
         results = defaultdict(float)
         labels = defaultdict()
         for prediction, example in zip(predictions, examples):
@@ -288,8 +289,9 @@ class CrowsPairTask(BaseTask, ABC):
         print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")
 
     def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
-        print(result_dict_group)
-        print("\n crows-pair evaluation")
+        for key,value in result_dict_group[0].items():
+            print_rank_0("category:{cat}  score:{score}".format(cat=key,score=value * 100))
+        
 
 class StereoSetTask(BaseTask, ABC):
     config: StereoSetTaskConfig
@@ -317,6 +319,7 @@ class StereoSetTask(BaseTask, ABC):
             print_rank_0("cat:{key}  score:{score}".format(key=key,score = round(val, 3)))
 
     def StereoSetMetric(self,predictions,examples):
+        print_rank_0("Special metric for StereoSet")
         assert len(predictions) == len(examples)
         results = defaultdict(list)
         for prediction, example in zip(predictions, examples):
@@ -359,7 +362,6 @@ class StereoSetTask(BaseTask, ABC):
             result_dict_group = {}
             for file in filelist:
                 dataset = self.build_dataset(file)
-                print(dataset)
                 dataloader = build_data_loader(
                     dataset,
                     micro_batch_size=self.config.micro_batch_size,

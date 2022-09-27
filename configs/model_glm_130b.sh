@@ -1,5 +1,5 @@
 MODEL_TYPE="glm-130b"
-CHECKPOINT_PATH="/mnt/yrfs/aohan/checkpoints/glm-130b-sat"
+CHECKPOINT_PATH="<your checkpoint path>"
 MP_SIZE=8
 MODEL_ARGS="--model-parallel-size ${MP_SIZE} \
             --num-layers 70 \
