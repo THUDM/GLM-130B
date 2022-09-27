@@ -1,1 +1,0 @@
-scripts/evaluate.sh: line 23: torchrun: command not found
