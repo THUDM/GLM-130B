@@ -1,7 +1,7 @@
 name: "CROWS"
 type: "mul"
-path: "CROWS"
-module:  "tasks.ethnic.tasks.CrowsPairTask"
+path: "CROWS_PAIR/data/CROWS"
+module:  "tasks.ethnic.CROWS_PAIR.tasks.CrowsPairTask"
 file-pattern:
   test: "**/CROWS_dataset.jsonl"
 

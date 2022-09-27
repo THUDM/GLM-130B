@@ -1,0 +1,87 @@
+WARNING:torch.distributed.run:
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+using world size: 8 and model-parallel size: 8 
+> padded vocab (size: 150528) with 0 dummy tokens (new size: 150528)
+WARNING: No training data specified
+WARNING: No training data specified
+WARNING: No training data specified
+> initializing model parallel with size 8
+> Loading task configs
+    Task CROWS loaded from config tasks/ethnic/CROWS_PAIR/CROWS_PAIR.yaml
+> Successfully load 1 task
+> Set tokenizer as a icetk-glm-130B tokenizer! Now you can get_tokenizer() everywhere.
+global rank 6 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_06_model_states.pt
+global rank 5 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_05_model_states.pt
+global rank 1 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_01_model_states.pt
+global rank 4 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_04_model_states.ptglobal rank 2 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_02_model_states.pt
+
+global rank 3 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_03_model_states.pt
+global rank 7 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_07_model_states.pt
+global rank 0 is loading checkpoint /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_00_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_02_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_01_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_06_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_04_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_03_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_07_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_00_model_states.pt
+  successfully loaded /mnt/yrfs/aohan/checkpoints/glm-130b-sat/49300/mp_rank_05_model_states.pt
+> Checkpoint loaded in 22.8s
+
+
+CrowsPairTaskConfig(name='CROWS', type=<TaskType.MULTICHOICE: 'mul'>, path='tasks/ethnic/CROWS_PAIR/data/CROWS', module='tasks.ethnic.CROWS_PAIR.tasks.CrowsPairTask', metrics=['CP'], use_task_mask=False, use_multitask_encoding=False, unidirectional=False, max_seq_length=2048, file_pattern={'test': '**/test.jsonl'}, micro_batch_size=1)
+Evaluating task CROWS:
+    Evaluating group test:
+Special metric for CrowsPair
+Evaluation results of task CROWS:
+{'test.jsonl': ({'CP': defaultdict(<class 'int'>, {'race-color': 0.6666666666666666, 'socioeconomic': 1.0, 'gender': 1.0})}, 181)}
+('CP', defaultdict(<class 'int'>, {'race-color': 0.6666666666666666, 'socioeconomic': 1.0, 'gender': 1.0}))
+Traceback (most recent call last):
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 67, in <module>
+    main()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 62, in main
+    evaluate_all_tasks(args.data_path, model, tokenizer, args.task, task_classes)
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluate.py", line 36, in evaluate_all_tasks
+    task.evaluate()
+  File "/mnt/yrfs/xuyifan/GLM-130B/evaluation/tasks.py", line 100, in evaluate
+    self.report_group_metrics(group_name, result_dict_group)
+  File "/mnt/yrfs/xuyifan/GLM-130B/tasks/ethnic/CROWS_PAIR/tasks.py", line 145, in report_group_metrics
+    for key, value in value1.items():
+AttributeError: 'tuple' object has no attribute 'items'
+ERROR:torch.distributed.elastic.multiprocessing.api:failed (exitcode: 1) local_rank: 0 (pid: 1019080) of binary: /mnt/yrfs/qinkai/miniconda3/envs/largescale/bin/python
+Traceback (most recent call last):
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/bin/torchrun", line 33, in <module>
+    sys.exit(load_entry_point('torch==1.12.0', 'console_scripts', 'torchrun')())
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 345, in wrapper
+    return f(*args, **kwargs)
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/run.py", line 761, in main
+    run(args)
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/run.py", line 752, in run
+    elastic_launch(
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 131, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/mnt/yrfs/qinkai/miniconda3/envs/largescale/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 245, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+/mnt/yrfs/xuyifan/GLM-130B/evaluate.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2022-09-27_17:38:37
+  host      : node14
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 1019080)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

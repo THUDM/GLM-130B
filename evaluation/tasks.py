@@ -9,23 +9,12 @@ from glob import glob
 from os.path import join, relpath
 from collections import defaultdict
 
-from SwissArmyTransformer.generation.sampling_strategies import BaseStrategy
 from SwissArmyTransformer.tokenization.icetk_glm_130B.ice_tokenizer import _IceTokenizer
 
 from generation import BeamSearchStrategy
-from .configs import (
-    BaseConfig,
-    GenerationTaskConfig,
-    MultiChoiceTaskConfig,
-    LanguageModelTaskConfig,
-)
+from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig, LanguageModelTaskConfig
 from .model import ModelForEvaluation
-from .dataset import (
-    EvaluationDataset,
-    GenerationTaskDataset,
-    MultiChoiceTaskDataset,
-    LanguageModelTaskDataset,
-)
+from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset
 from .utils import build_data_loader, gather_result, print_rank_0
 from .metrics import DEFAULT_METRICS
 
@@ -44,9 +33,7 @@ class BaseTask(ABC):
     def metrics(self) -> Dict[str, Callable]:
         return {metric: DEFAULT_METRICS[metric] for metric in self.config.metrics}
 
-    def __init__(
-        self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: BaseConfig
-    ):
+    def __init__(self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: BaseConfig):
         self.model = model
         self.tokenizer = tokenizer
         self.config = config
@@ -64,9 +51,7 @@ class BaseTask(ABC):
         return {
             name: [
                 relpath(path, start=self.config.path)
-                for path in sorted(
-                    glob(join(self.config.path, pattern), recursive=True)
-                )
+                for path in sorted(glob(join(self.config.path, pattern), recursive=True))
             ]
             for name, pattern in pattern_group.items()
         }
@@ -99,13 +84,8 @@ class BaseTask(ABC):
                     for _, batch in enumerate(dataloader):
                         prediction.append(self.predict_single_batch(batch))
 
-                prediction = gather_result(
-                    prediction, len(dataset), self.config.micro_batch_size
-                )
-                result_dict = {
-                    key: metric(prediction, dataset.data)
-                    for key, metric in self.metrics.items()
-                }
+                prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
+                result_dict = {key: metric(prediction, dataset.data) for key, metric in self.metrics.items()}
                 result_dict_group[file] = (result_dict, len(dataset))
 
                 if self.verbose:
@@ -119,11 +99,7 @@ class BaseTask(ABC):
             for group_name, result_dict_group in result_dict_all.items():
                 self.report_group_metrics(group_name, result_dict_group)
             self.report_overall_metrics(
-                {
-                    k: v
-                    for result_dict_group in result_dict_all.values()
-                    for k, v in result_dict_group.items()
-                },
+                {k: v for result_dict_group in result_dict_all.values() for k, v in result_dict_group.items()},
             )
 
         print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")
@@ -151,18 +127,12 @@ class BaseTask(ABC):
             for name, value in metrics_dict.items()
         }
 
-    def report_group_metrics(
-        self,
-        group_name,
-        result_dict_group: Dict[str, Tuple[Dict[str, float], int]],
-        level=1,
-    ):
+    def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
         stats_dict = self.calc_group_metrics(result_dict_group)
         if len(stats_dict) == 1:
             name, stats = next(iter(stats_dict.items()))
             print_rank_0(
-                "    " * level
-                + f"Group {group_name} {name}: max = {stats['max']:.3f}, "
+                "    " * level + f"Group {group_name} {name}: max = {stats['max']:.3f}, "
                 f"median = {stats['median']:.3f}, average = {stats['average']:.3f}"
             )
         else:
@@ -173,9 +143,7 @@ class BaseTask(ABC):
                     f"median = {stats['median']:.3f}, average = {stats['average']:.3f}"
                 )
 
-    def report_overall_metrics(
-        self, result_dict_all: Dict[str, Tuple[Dict[str, float], int]]
-    ):
+    def report_overall_metrics(self, result_dict_all: Dict[str, Tuple[Dict[str, float], int]]):
         pass
 
     @abstractmethod
@@ -197,21 +165,17 @@ class GenerationTask(BaseTask, ABC):
     def build_dataset(self, relative_path):
         return GenerationTaskDataset(join(self.config.path, relative_path), self.config)
 
-    def __init__(
-        self,
-        model: ModelForEvaluation,
-        tokenizer: _IceTokenizer,
-        config: GenerationTaskConfig,
-    ):
+    def __init__(self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: GenerationTaskConfig):
         super(GenerationTask, self).__init__(model, tokenizer, config)
 
         end_tokens = [tokenizer.get_command("eop"), tokenizer.get_command("eos")]
         if self.config.sampling_strategy == "BaseStrategy":
             self.strategy = BaseStrategy(
-                temperature=1.0, top_k=1, end_tokens=end_tokens
+                batch_size=self.config.micro_batch_size, temperature=1.0, top_k=1, end_tokens=end_tokens
             )
         elif self.config.sampling_strategy == "BeamSearchStrategy":
             self.strategy = BeamSearchStrategy(
+                self.config.micro_batch_size,
                 self.config.num_beams,
                 length_penalty=self.config.length_penalty,
                 consider_end=True,
@@ -224,10 +188,8 @@ class GenerationTask(BaseTask, ABC):
             raise ValueError(f"unknown strategy {self.config.sampling_strategy}")
 
     def predict_single_batch(self, batch) -> List[List[int]]:
-        # micro batch size = 1 for generation task,
-        # but we still need to return a list of predictions for consistency
         output = self.model.generate_text(batch, self.strategy, return_all_beams=False)
-        return [output]
+        return output
 
 
 class MultiChoiceTask(BaseTask, ABC):
@@ -238,13 +200,10 @@ class MultiChoiceTask(BaseTask, ABC):
         return MultiChoiceTaskConfig
 
     def build_dataset(self, relative_path):
-        return MultiChoiceTaskDataset(
-            join(self.config.path, relative_path), self.config
-        )
+        return MultiChoiceTaskDataset(join(self.config.path, relative_path), self.config)
 
     def predict_single_batch(self, batch) -> List[int]:
         log_probs = self.model.cond_log_prob(batch)
-        print([np.argmax(log_probs_single).item() for log_probs_single in log_probs])
         return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
 
 
@@ -256,9 +215,7 @@ class LanguageModelTask(BaseTask, ABC):
         return LanguageModelTaskConfig
 
     def build_dataset(self, relative_path):
-        return LanguageModelTaskDataset(
-            join(self.config.path, relative_path), self.config
-        )
+        return LanguageModelTaskDataset(join(self.config.path, relative_path), self.config)
 
     def predict_single_batch(self, batch) -> List[float]:
         return self.model.calculate_loss(batch)

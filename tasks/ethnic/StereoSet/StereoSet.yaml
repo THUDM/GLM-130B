@@ -1,7 +1,7 @@
 name: "StereoSet"
 type: "mul"
-path: "StereoSet"
-module: "tasks.ethnic.tasks.StereoSetTask"
+path: "StereoSet/data/StereoSet"
+module: "tasks.ethnic.StereoSet.tasks.StereoSetTask"
 use_task_mask: True
 file-pattern:
   test: "**/SS_dataset.jsonl"
