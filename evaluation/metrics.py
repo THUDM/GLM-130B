@@ -10,9 +10,8 @@ from collections import Counter
 from collections import defaultdict
 from SwissArmyTransformer import get_tokenizer
 import torch
-def print_rank_0(*args, **kwargs):
-    if torch.distributed.get_rank() == 0:
-        print(*args, **kwargs)
+from .utils import print_rank_0
+
 
 def accuracy_metric(predictions, examples):
     count = 0
@@ -22,35 +21,36 @@ def accuracy_metric(predictions, examples):
         count += prediction == example["label"]
     return count * 100.0 / num_predictions
 
+
 def F1_metric(predictions, examples):
-    count = 0
-    num_predictions = max(len(predictions), 1)
     assert len(predictions) == len(examples)
     from sklearn.metrics import f1_score
+
     truth = []
     for prediction, example in zip(predictions, examples):
         truth.append(example["label"])
-    return f1_score(truth, predictions, average='micro') * 100.0
+    return f1_score(truth, predictions, average="micro") * 100.0
+
 
 def precision_metric(predictions, examples):
-    count = 0
-    num_predictions = max(len(predictions), 1)
     assert len(predictions) == len(examples)
     from sklearn.metrics import precision_score
+
     truth = []
     for prediction, example in zip(predictions, examples):
         truth.append(example["label"])
-    return precision_score(truth, predictions, average='micro') * 100.0
+    return precision_score(truth, predictions, average="micro") * 100.0
+
 
 def recall_metric(predictions, examples):
-    count = 0
-    num_predictions = max(len(predictions), 1)
     assert len(predictions) == len(examples)
     from sklearn.metrics import recall_score
+
     truth = []
     for prediction, example in zip(predictions, examples):
         truth.append(example["label"])
-    return recall_score(truth, predictions, average='micro') * 100.0
+    return recall_score(truth, predictions, average="micro") * 100.0
+
 
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
@@ -104,8 +104,10 @@ def qa_evaluate(predictions, examples, metric):
 
     score = 0.0
     for example, prediction in zip(examples, predictions):
-        #print(example)
-        ground_truths = [tokenizer.tokenizer.decode(target) for target in example["targets"]]
+        # print(example)
+        ground_truths = [
+            tokenizer.tokenizer.decode(target) for target in example["targets"]
+        ]
         prediction = tokenizer.tokenizer.decode(prediction)
         if ground_truths:
             score += metric_max_over_ground_truths(metric, prediction, ground_truths)
@@ -117,7 +119,6 @@ qa_exact_match = functools.partial(qa_evaluate, metric=exact_match_score)
 qa_f1 = functools.partial(qa_evaluate, metric=f1_score)
 
 
-
 def calculate_perplexity(loss: List[float], data):
     return math.exp(min(20, np.sum(loss) / data[0]["num_original_tokens"]))
 
@@ -127,9 +128,18 @@ def special_for_dataset(predictions, examples):
     return True
 
 
-DEFAULT_METRICS = defaultdict(lambda :special_for_dataset)
-DEFAULT_METRICS.update({"EM": qa_exact_match, "F1": qa_f1, "Accuracy": accuracy_metric, "PPL": calculate_perplexity,"Precision":precision_metric,"Recall":recall_metric})
-ADD_METRICS = {"F1_mul":F1_metric}
-#ADD_METRICS = {"F1_mul":F1_metric,"SS_ICAT":StereoSet_ICAT,"CP":CrowsPair}
+DEFAULT_METRICS = defaultdict(lambda: special_for_dataset)
+DEFAULT_METRICS.update(
+    {
+        "EM": qa_exact_match,
+        "F1": qa_f1,
+        "Accuracy": accuracy_metric,
+        "PPL": calculate_perplexity,
+        "Precision": precision_metric,
+        "Recall": recall_metric,
+    }
+)
+ADD_METRICS = {"F1_mul": F1_metric}
+# ADD_METRICS = {"F1_mul":F1_metric,"SS_ICAT":StereoSet_ICAT,"CP":CrowsPair}
 
 DEFAULT_METRICS.update(ADD_METRICS)

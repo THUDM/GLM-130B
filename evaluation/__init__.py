@@ -1,6 +1,6 @@
 from .configs import *
 from .model import ModelForEvaluation
-from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask, StereoSetTask, CrowsPairTask
+from .tasks import BaseTask, GenerationTask, MultiChoiceTask, LanguageModelTask
 from .metrics import qa_evaluate
 from .utils import print_rank_0
 

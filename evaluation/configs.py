@@ -30,24 +30,18 @@ class BaseConfig(YAMLWizard):
     micro_batch_size: int = 1  # 'gen' task only support mbs = 1 for now
 
     def __post_init__(self):
-        assert self.use_task_mask or not self.unidirectional, "[MASK] doesn't support unidirectional attention"
+        assert (
+            self.use_task_mask or not self.unidirectional
+        ), "[MASK] doesn't support unidirectional attention"
 
 
 @dataclass
 class MultiChoiceTaskConfig(BaseConfig):
     module = "evaluation.MultiChoiceTask"
-    metrics: List[str] = field(default_factory=lambda: ["Accuracy","Precision","Recall","F1_mul"])
+    metrics: List[str] = field(
+        default_factory=lambda: ["Accuracy", "Precision", "Recall", "F1_mul"]
+    )
 
-@dataclass
-class StereoSetTaskConfig(BaseConfig):
-    module = "evaluation.StereoSetTask"
-    metrics: List[str] = field(default_factory=lambda: ["SS_ICAT"])
-    #use_task_mask: bool = True
-
-@dataclass
-class CrowsPairTaskConfig(BaseConfig):
-    module = "evaluation.CrowsPairTask"
-    metrics: List[str] = field(default_factory=lambda: ["CP"])
 
 @dataclass
 class GenerationTaskConfig(BaseConfig):
@@ -61,7 +55,9 @@ class GenerationTaskConfig(BaseConfig):
     max_gen_length: int = 128
 
     def __post_init__(self):
-        assert self.micro_batch_size == 1, "Only support micro batch size = 1 for generation task"
+        assert (
+            self.micro_batch_size == 1
+        ), "Only support micro batch size = 1 for generation task"
 
 
 @dataclass

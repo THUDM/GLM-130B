@@ -13,9 +13,19 @@ from SwissArmyTransformer.generation.sampling_strategies import BaseStrategy
 from SwissArmyTransformer.tokenization.icetk_glm_130B.ice_tokenizer import _IceTokenizer
 
 from generation import BeamSearchStrategy
-from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig, LanguageModelTaskConfig, StereoSetTaskConfig, CrowsPairTaskConfig
+from .configs import (
+    BaseConfig,
+    GenerationTaskConfig,
+    MultiChoiceTaskConfig,
+    LanguageModelTaskConfig,
+)
 from .model import ModelForEvaluation
-from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset, StereoSetDataset, CrowsPairDataset
+from .dataset import (
+    EvaluationDataset,
+    GenerationTaskDataset,
+    MultiChoiceTaskDataset,
+    LanguageModelTaskDataset,
+)
 from .utils import build_data_loader, gather_result, print_rank_0
 from .metrics import DEFAULT_METRICS
 
@@ -34,7 +44,9 @@ class BaseTask(ABC):
     def metrics(self) -> Dict[str, Callable]:
         return {metric: DEFAULT_METRICS[metric] for metric in self.config.metrics}
 
-    def __init__(self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: BaseConfig):
+    def __init__(
+        self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: BaseConfig
+    ):
         self.model = model
         self.tokenizer = tokenizer
         self.config = config
@@ -52,7 +64,9 @@ class BaseTask(ABC):
         return {
             name: [
                 relpath(path, start=self.config.path)
-                for path in sorted(glob(join(self.config.path, pattern), recursive=True))
+                for path in sorted(
+                    glob(join(self.config.path, pattern), recursive=True)
+                )
             ]
             for name, pattern in pattern_group.items()
         }
@@ -85,8 +99,13 @@ class BaseTask(ABC):
                     for _, batch in enumerate(dataloader):
                         prediction.append(self.predict_single_batch(batch))
 
-                prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
-                result_dict = {key: metric(prediction, dataset.data) for key, metric in self.metrics.items()}
+                prediction = gather_result(
+                    prediction, len(dataset), self.config.micro_batch_size
+                )
+                result_dict = {
+                    key: metric(prediction, dataset.data)
+                    for key, metric in self.metrics.items()
+                }
                 result_dict_group[file] = (result_dict, len(dataset))
 
                 if self.verbose:
@@ -100,7 +119,11 @@ class BaseTask(ABC):
             for group_name, result_dict_group in result_dict_all.items():
                 self.report_group_metrics(group_name, result_dict_group)
             self.report_overall_metrics(
-                {k: v for result_dict_group in result_dict_all.values() for k, v in result_dict_group.items()},
+                {
+                    k: v
+                    for result_dict_group in result_dict_all.values()
+                    for k, v in result_dict_group.items()
+                },
             )
 
         print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")
@@ -128,12 +151,18 @@ class BaseTask(ABC):
             for name, value in metrics_dict.items()
         }
 
-    def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
+    def report_group_metrics(
+        self,
+        group_name,
+        result_dict_group: Dict[str, Tuple[Dict[str, float], int]],
+        level=1,
+    ):
         stats_dict = self.calc_group_metrics(result_dict_group)
         if len(stats_dict) == 1:
             name, stats = next(iter(stats_dict.items()))
             print_rank_0(
-                "    " * level + f"Group {group_name} {name}: max = {stats['max']:.3f}, "
+                "    " * level
+                + f"Group {group_name} {name}: max = {stats['max']:.3f}, "
                 f"median = {stats['median']:.3f}, average = {stats['average']:.3f}"
             )
         else:
@@ -144,7 +173,9 @@ class BaseTask(ABC):
                     f"median = {stats['median']:.3f}, average = {stats['average']:.3f}"
                 )
 
-    def report_overall_metrics(self, result_dict_all: Dict[str, Tuple[Dict[str, float], int]]):
+    def report_overall_metrics(
+        self, result_dict_all: Dict[str, Tuple[Dict[str, float], int]]
+    ):
         pass
 
     @abstractmethod
@@ -166,12 +197,19 @@ class GenerationTask(BaseTask, ABC):
     def build_dataset(self, relative_path):
         return GenerationTaskDataset(join(self.config.path, relative_path), self.config)
 
-    def __init__(self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: GenerationTaskConfig):
+    def __init__(
+        self,
+        model: ModelForEvaluation,
+        tokenizer: _IceTokenizer,
+        config: GenerationTaskConfig,
+    ):
         super(GenerationTask, self).__init__(model, tokenizer, config)
 
         end_tokens = [tokenizer.get_command("eop"), tokenizer.get_command("eos")]
         if self.config.sampling_strategy == "BaseStrategy":
-            self.strategy = BaseStrategy(temperature=1.0, top_k=1, end_tokens=end_tokens)
+            self.strategy = BaseStrategy(
+                temperature=1.0, top_k=1, end_tokens=end_tokens
+            )
         elif self.config.sampling_strategy == "BeamSearchStrategy":
             self.strategy = BeamSearchStrategy(
                 self.config.num_beams,
@@ -200,195 +238,15 @@ class MultiChoiceTask(BaseTask, ABC):
         return MultiChoiceTaskConfig
 
     def build_dataset(self, relative_path):
-        return MultiChoiceTaskDataset(join(self.config.path, relative_path), self.config)
+        return MultiChoiceTaskDataset(
+            join(self.config.path, relative_path), self.config
+        )
 
     def predict_single_batch(self, batch) -> List[int]:
         log_probs = self.model.cond_log_prob(batch)
         print([np.argmax(log_probs_single).item() for log_probs_single in log_probs])
         return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
 
-class CrowsPairTask(BaseTask, ABC):
-    config: CrowsPairTaskConfig
-
-    @classmethod
-    def config_class(cls):
-        return CrowsPairTaskConfig
-
-    def build_dataset(self, relative_path):
-        return CrowsPairDataset(join(self.config.path, relative_path), self.config)
-
-    def predict_single_batch(self, batch) -> List[int]:
-        log_probs = self.model.cond_log_prob(batch)
-        return log_probs
-
-    def CrowsPairMetric(self,predictions,examples):
-        print_rank_0("Special metric for CrowsPair")
-        results = defaultdict(float)
-        labels = defaultdict()
-        for prediction, example in zip(predictions, examples):
-            prediction = prediction[0]
-            if example["sent_ID"]==1:
-                results[example["pair_ID"]] = results[example["pair_ID"]] + prediction
-            else:
-                results[example["pair_ID"]] = results[example["pair_ID"]] - prediction
-            labels[example["pair_ID"]] = example["bias_type"]
-        cat_postivie = defaultdict(int)
-        cat_tt = defaultdict(int)
-        final = defaultdict(int)
-        for val1,val2 in zip(results.values(), labels.values()):
-            if val1>=0:
-                cat_postivie[val2] = cat_postivie[val2] + 1
-            else:
-                cat_postivie[val2] = cat_postivie[val2]
-            cat_tt[val2] = cat_tt[val2] + 1
-        for key,val in cat_postivie.items():
-            final[key] = val/cat_tt[key]
-        return final
-
-    def evaluate(self):
-        dist.barrier()
-        start = time.time()
-        print_rank_0("\n")
-        print_rank_0(f"{self.config}")
-        print_rank_0(f"Evaluating task {self.config.name}:")
-
-        result_dict_all = {}
-
-        for group_name, filelist in self.file_groups.items():
-            print_rank_0(f"    Evaluating group {group_name}:")
-
-            result_dict_group = {}
-            for file in filelist:
-                dataset = self.build_dataset(file)
-                dataloader = build_data_loader(
-                    dataset,
-                    micro_batch_size=self.config.micro_batch_size,
-                    num_workers=1,
-                    drop_last=False,
-                    collate_fn=dataset.collate_fn if dataset.has_collate_fn else None,
-                )
-
-                prediction = []
-                with torch.no_grad():
-                    for _, batch in enumerate(dataloader):
-                        prediction.append(self.predict_single_batch(batch))
-
-                prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
-                result_list = self.CrowsPairMetric(prediction, dataset.eval_data)
-                # for key, metric in self.metrics.items():
-                    # result_list = metric(prediction, dataset.eval_data)
-                result_dict_group = (result_list, len(dataset))
-
-            result_dict_all[group_name] = result_dict_group
-            
-        print_rank_0(f"Evaluation results of task {self.config.name}:")
-        if self.verbose:
-            for group_name, result_dict_group in result_dict_all.items():
-                self.report_group_metrics(group_name, result_dict_group)
-
-        print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")
-
-    def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
-        for key,value in result_dict_group[0].items():
-            print_rank_0("category:{cat}  score:{score}".format(cat=key,score=value * 100))
-        
-
-class StereoSetTask(BaseTask, ABC):
-    config: StereoSetTaskConfig
-
-    @classmethod
-    def config_class(cls):
-        return StereoSetTaskConfig
-
-    def build_dataset(self, relative_path):
-        return StereoSetDataset(join(self.config.path, relative_path), self.config)
-
-    def predict_single_batch(self, batch) -> List[int]: 
-        log_probs = self.model.cond_log_prob(batch)
-        return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
-
-    def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
-        print("LMS")
-        for key,val in result_dict_group[0][0].items():
-            print_rank_0("cat:{key}  score:{score}".format(key=key,score = round(val, 3)))
-        print("SS")
-        for key,val in result_dict_group[0][1].items():
-            print_rank_0("cat:{key}  score:{score}".format(key=key,score = round(val, 3)))
-        print("ICAT")
-        for key,val in result_dict_group[0][2].items():
-            print_rank_0("cat:{key}  score:{score}".format(key=key,score = round(val, 3)))
-
-    def StereoSetMetric(self,predictions,examples):
-        print_rank_0("Special metric for StereoSet")
-        assert len(predictions) == len(examples)
-        results = defaultdict(list)
-        for prediction, example in zip(predictions, examples):
-            #print(prediction,example["goal_label"],example["goal_label"][prediction])
-            predict_label = example["goal_label"][prediction]
-            example_type = example["bias_type"]
-            results[example_type].append(predict_label)
-            results["overall"].append(predict_label)
-        ss = {}
-        lms = {}
-        icat = {}
-        for key,values in results.items():
-            label_dict={'unrelated': 0, 'stereotype': 0, 'anti-stereotype': 0}
-            for label_keys in values:
-                label_dict[label_keys]=label_dict.get(label_keys,0)+1
-            tt = len(values)
-            lms[key] = (label_dict["anti-stereotype"] + label_dict["stereotype"])/tt * 100
-            if label_dict["stereotype"] + label_dict["anti-stereotype"] == 0:
-                ss[key] = 0
-            else:
-                ss[key] = label_dict["stereotype"] / (label_dict["anti-stereotype"] + label_dict["stereotype"]) * 100
-        
-            icat[key] = lms[key] * (min(ss[key], 100.0 - ss[key]) / 50.0)
-        return [lms,ss,icat]
-
-
-    def evaluate(self):
-        print_rank_0("\nThis is special for StereoSet evaluation")
-        dist.barrier()
-        start = time.time()
-        print_rank_0("\n")
-        print_rank_0(f"{self.config}")
-        print_rank_0(f"Evaluating task {self.config.name}:")
-
-        result_dict_all = {}
-
-        for group_name, filelist in self.file_groups.items():
-            print_rank_0(f"    Evaluating group {group_name}:")
-
-            result_dict_group = {}
-            for file in filelist:
-                dataset = self.build_dataset(file)
-                dataloader = build_data_loader(
-                    dataset,
-                    micro_batch_size=self.config.micro_batch_size,
-                    num_workers=1,
-                    drop_last=False,
-                    collate_fn=dataset.collate_fn if dataset.has_collate_fn else None,
-                )
-
-                prediction = []
-                with torch.no_grad():
-                    for _, batch in enumerate(dataloader):
-                        prediction.append(self.predict_single_batch(batch))
-
-                prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
-                result_list = self.StereoSetMetric(prediction, dataset.eval_data)
-                # for key, metric in self.metrics.items():
-                    # result_list = metric(prediction, dataset.eval_data)
-                result_dict_group = (result_list, len(dataset))
-
-            result_dict_all[group_name] = result_dict_group
-            
-        print_rank_0(f"Evaluation results of task {self.config.name}:")
-        if self.verbose:
-            for group_name, result_dict_group in result_dict_all.items():
-                self.report_group_metrics(group_name, result_dict_group)
-
-        print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")
 
 class LanguageModelTask(BaseTask, ABC):
     config: LanguageModelTaskConfig
@@ -398,8 +256,9 @@ class LanguageModelTask(BaseTask, ABC):
         return LanguageModelTaskConfig
 
     def build_dataset(self, relative_path):
-        return LanguageModelTaskDataset(join(self.config.path, relative_path), self.config)
+        return LanguageModelTaskDataset(
+            join(self.config.path, relative_path), self.config
+        )
 
     def predict_single_batch(self, batch) -> List[float]:
         return self.model.calculate_loss(batch)
-

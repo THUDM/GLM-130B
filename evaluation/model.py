@@ -17,7 +17,10 @@ class ModelForEvaluation(torch.nn.Module):
         return (
             batch["tokens"].to(device=torch.cuda.current_device()).long(),
             batch["position_ids"].to(device=torch.cuda.current_device()).long(),
-            batch["attention_mask"].to(device=torch.cuda.current_device()).bool().unsqueeze(1),
+            batch["attention_mask"]
+            .to(device=torch.cuda.current_device())
+            .bool()
+            .unsqueeze(1),
         )
 
     def cond_log_prob(self, batch) -> List[List[float]]:
@@ -25,22 +28,31 @@ class ModelForEvaluation(torch.nn.Module):
         @return: Conditional log probability of each option
         """
         tokens, position_ids, attention_mask = self.process_data(batch)
-        choices_batch, choice_target_ids_batch = batch["choices"], batch["choice_target_ids"]
+        choices_batch, choice_target_ids_batch = (
+            batch["choices"],
+            batch["choice_target_ids"],
+        )
         is_single_token = batch["is_single_token"]
 
         self.model.eval()
         with torch.no_grad():
-            logits, *output_per_layers = self.model(tokens, position_ids, attention_mask, log_attention_weights=None)
+            logits, *output_per_layers = self.model(
+                tokens, position_ids, attention_mask, log_attention_weights=None
+            )
             logits_batch = torch.nn.functional.log_softmax(logits, dim=-1)
 
         # output: [b, sq, vocab]
         log_probs = []
 
         if is_single_token:  # Single token
-            for logits, choices, choice_target_ids in zip(logits_batch, choices_batch, choice_target_ids_batch):
+            for logits, choices, choice_target_ids in zip(
+                logits_batch, choices_batch, choice_target_ids_batch
+            ):
                 log_probs.append(logits[choice_target_ids[0], choices].tolist())
         else:  # Multi token
-            for output, choices, choice_target_ids in zip(logits_batch, choices_batch, choice_target_ids_batch):
+            for output, choices, choice_target_ids in zip(
+                logits_batch, choices_batch, choice_target_ids_batch
+            ):
                 log_probs_single = []
                 for choice, choice_target_id in zip(choices, choice_target_ids):
                     tmp = output[choice_target_id, choice]
@@ -48,19 +60,32 @@ class ModelForEvaluation(torch.nn.Module):
                 log_probs.append(log_probs_single)
         return log_probs
 
-    def generate_text(self, sample, strategy, return_all_beams=False) -> Union[List[int], List[List[int]]]:
+    def generate_text(
+        self, sample, strategy, return_all_beams=False
+    ) -> Union[List[int], List[List[int]]]:
         """
         @return: A list of text model generated, sorted by score in descending order
         """
 
-        seq = torch.squeeze(sample["tokens"].to(device=torch.cuda.current_device()).long())
-        context_length = sample["context_length"].to(device=torch.cuda.current_device()).long()
+        seq = torch.squeeze(
+            sample["tokens"].to(device=torch.cuda.current_device()).long()
+        )
+        context_length = (
+            sample["context_length"].to(device=torch.cuda.current_device()).long()
+        )
         seq[context_length:] = -1
 
         def get_masks_and_position_ids(seq):
             tokens = seq.unsqueeze(0)
-            attention_mask = sample["attention_mask"].to(device=torch.cuda.current_device()).bool().unsqueeze(1)
-            position_ids = sample["position_ids"].to(device=torch.cuda.current_device()).long()
+            attention_mask = (
+                sample["attention_mask"]
+                .to(device=torch.cuda.current_device())
+                .bool()
+                .unsqueeze(1)
+            )
+            position_ids = (
+                sample["position_ids"].to(device=torch.cuda.current_device()).long()
+            )
             return tokens, attention_mask, position_ids
 
         self.model.eval()
@@ -100,7 +125,9 @@ class ModelForEvaluation(torch.nn.Module):
         self.model.eval()
 
         with torch.no_grad():
-            logits, *output_per_layers = self.model(tokens, position_ids, attention_mask, log_attention_weights=None)
+            logits, *output_per_layers = self.model(
+                tokens, position_ids, attention_mask, log_attention_weights=None
+            )
             losses = vocab_parallel_cross_entropy(logits.contiguous().float(), targets)
             loss = torch.sum(losses * loss_masks, dim=-1)
 

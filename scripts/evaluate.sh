@@ -6,7 +6,7 @@ main_dir=$(dirname $script_dir)
 
 source "${main_dir}/configs/model_glm_130b.sh"
 
-DATA_PATH="data/"
+DATA_PATH="<your evaluation dataset base directory>"
 
 ARGS="${main_dir}/evaluate.py \
        --mode inference \
