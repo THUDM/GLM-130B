@@ -2,6 +2,7 @@ from typing import List
 from dataclasses import dataclass, field
 from evaluation import (
     BaseTask,
+    MultiChoiceTask,
     MultiChoiceTaskConfig,
 )
 from abc import ABC
@@ -20,12 +21,8 @@ from evaluation.utils import (
 )
 
 
-class CrowsPairTask(BaseTask, ABC):
+class CrowsPairTask(MultiChoiceTask, ABC):
     config: MultiChoiceTaskConfig
-
-    @classmethod
-    def config_class(cls):
-        return v
 
     def build_dataset(self, relative_path):
         return CrowsPairDataset(join(self.config.path, relative_path), self.config)

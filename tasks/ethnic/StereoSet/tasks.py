@@ -2,6 +2,7 @@ import numpy as np
 from typing import List
 from evaluation import (
     BaseTask,
+    MultiChoiceTask,
     MultiChoiceTaskConfig,
 )
 from abc import ABC
@@ -21,19 +22,11 @@ from evaluation.utils import (
 )
 
 
-class StereoSetTask(BaseTask, ABC):
+class StereoSetTask(MultiChoiceTask, ABC):
     config: MultiChoiceTaskConfig
-
-    @classmethod
-    def config_class(cls):
-        return MultiChoiceTaskConfig
 
     def build_dataset(self, relative_path):
         return StereoSetDataset(join(self.config.path, relative_path), self.config)
-
-    def predict_single_batch(self, batch) -> List[int]:
-        log_probs = self.model.cond_log_prob(batch)
-        return [np.argmax(log_probs_single).item() for log_probs_single in log_probs]
 
     def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
         for tmp1 in result_dict_group.values():
