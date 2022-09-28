@@ -1,0 +1,10 @@
+name: "Pile"
+type: "lm"
+module: "tasks.language-modeling.pile.Pile"
+path: "pile"
+file-pattern:
+  test: "**/test_tokenized.jsonl"
+#  validation: "**/val_tokenized.jsonl"
+
+generation-length: 1024
+use_task_mask: true
