@@ -1,5 +1,5 @@
 MODEL_TYPE="glm-130b"
-CHECKPOINT_PATH="<your evaluation dataset base directory>"
+CHECKPOINT_PATH="<your checkpoint path>"
 MP_SIZE=8
 MODEL_ARGS="--model-parallel-size ${MP_SIZE} \
             --num-layers 70 \

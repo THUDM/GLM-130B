@@ -28,6 +28,16 @@ class StereoSetTask(MultiChoiceTask, ABC):
     def build_dataset(self, relative_path):
         return StereoSetDataset(join(self.config.path, relative_path), self.config)
 
+    def predict_single_batch(self, batch) -> List[int]:
+        log_probs = self.model.cond_log_prob(batch)
+        normalize_log_probs = []
+        for origin_datas, predicts in zip(batch.get("choices"), log_probs):
+            normalize_log_probs_single = []
+            for origin_data, predict in zip(origin_datas, predicts):
+                normalize_log_probs_single.append(predict / len(origin_data))
+            normalize_log_probs.append(normalize_log_probs_single)
+        return [np.argmax(log_probs_single).item() for log_probs_single in normalize_log_probs]
+
     def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
         for tmp1 in result_dict_group.values():
             tmp1 = tmp1[0]

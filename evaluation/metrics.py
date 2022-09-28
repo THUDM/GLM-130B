@@ -140,6 +140,5 @@ DEFAULT_METRICS.update(
     }
 )
 ADD_METRICS = {"F1_mul": F1_metric}
-# ADD_METRICS = {"F1_mul":F1_metric,"SS_ICAT":StereoSet_ICAT,"CP":CrowsPair}
 
 DEFAULT_METRICS.update(ADD_METRICS)
