@@ -1,61 +1,32 @@
-import os
-import json
 import numpy as np
-import torch
 from typing import List
-from dataclasses import dataclass, field
 from evaluation import (
-    BaseConfig,
-    MultiChoiceTask,
     BaseTask,
     MultiChoiceTaskConfig,
 )
 from abc import ABC
 from os.path import join
 from evaluation.utils import print_rank_0
-import torch
-import time
 import numpy as np
-import torch.distributed as dist
 from typing import Dict, Tuple, List
 from abc import ABC
 from collections import defaultdict
 from typing import List
-import torch
-from evaluation.configs import (
-    BaseConfig,
-    GenerationTaskConfig,
-    MultiChoiceTaskConfig,
-    LanguageModelTaskConfig,
-)
 from evaluation.dataset import (
-    EvaluationDataset,
-    GenerationTaskDataset,
     MultiChoiceTaskDataset,
-    LanguageModelTaskDataset,
 )
 from evaluation.utils import (
-    build_data_loader,
-    gather_result,
     print_rank_0,
     get_tokenized_input,
 )
-from evaluation.metrics import DEFAULT_METRICS
-
-
-@dataclass
-class StereoSetTaskConfig(BaseConfig):
-    module = "tasks.ethnic.StereoSet.tasks.StereoSetTask"
-    metrics: List[str] = field(default_factory=lambda: ["SS_ICAT"])
-    # use_task_mask: bool = True
 
 
 class StereoSetTask(BaseTask, ABC):
-    config: StereoSetTaskConfig
+    config: MultiChoiceTaskConfig
 
     @classmethod
     def config_class(cls):
-        return StereoSetTaskConfig
+        return MultiChoiceTaskConfig
 
     def build_dataset(self, relative_path):
         return StereoSetDataset(join(self.config.path, relative_path), self.config)

@@ -2,7 +2,7 @@ from string import punctuation
 from functools import partial
 from typing import List
 
-from evaluation import qa_evaluate, GenerationTask, 
+from evaluation import qa_evaluate, GenerationTask
 
 from .strategy import BeamSearchStrategyForLAMBADA
 

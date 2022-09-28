@@ -287,8 +287,6 @@ class MultiChoiceTaskDataset(EvaluationDataset):
             if is_single_token:
                 break
 
-        # if len(token)!=len(position_id) or len(position_id)!=len(attention_mask):
-        # print(len(token),len(position_id),)
         attention_mask = block_diag(*attention_mask)
         attention_mask[: len(token), :division] = 1
 

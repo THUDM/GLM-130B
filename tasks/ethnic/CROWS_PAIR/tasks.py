@@ -1,60 +1,31 @@
-import os
-import json
-import numpy as np
-import torch
 from typing import List
 from dataclasses import dataclass, field
 from evaluation import (
-    BaseConfig,
-    MultiChoiceTask,
     BaseTask,
     MultiChoiceTaskConfig,
 )
 from abc import ABC
 from os.path import join
 from evaluation.utils import print_rank_0
-import torch
-import time
-import numpy as np
-import torch.distributed as dist
 from typing import Dict, Tuple, List
 from abc import ABC
 from collections import defaultdict
 from typing import List
-import torch
-from evaluation.configs import (
-    BaseConfig,
-    GenerationTaskConfig,
-    MultiChoiceTaskConfig,
-    LanguageModelTaskConfig,
-)
 from evaluation.dataset import (
-    EvaluationDataset,
-    GenerationTaskDataset,
     MultiChoiceTaskDataset,
-    LanguageModelTaskDataset,
 )
 from evaluation.utils import (
-    build_data_loader,
-    gather_result,
     print_rank_0,
     get_tokenized_input,
 )
-from evaluation.metrics import DEFAULT_METRICS
-
-
-@dataclass
-class CrowsPairTaskConfig(BaseConfig):
-    module = "tasks.ethnic.CROWS_PAIR.tasks.CrowsPairTask"
-    metrics: List[str] = field(default_factory=lambda: ["CP"])
 
 
 class CrowsPairTask(BaseTask, ABC):
-    config: CrowsPairTaskConfig
+    config: MultiChoiceTaskConfig
 
     @classmethod
     def config_class(cls):
-        return CrowsPairTaskConfig
+        return v
 
     def build_dataset(self, relative_path):
         return CrowsPairDataset(join(self.config.path, relative_path), self.config)
@@ -94,48 +65,6 @@ class CrowsPairTask(BaseTask, ABC):
     def metrics(self):
         return {"CP": self.CrowsPairMetric}
 
-    """
-    def evaluate(self):
-        dist.barrier()
-        start = time.time()
-        print_rank_0("\n")
-        print_rank_0(f"{self.config}")
-        print_rank_0(f"Evaluating task {self.config.name}:")
-
-        result_dict_all = {}
-
-        for group_name, filelist in self.file_groups.items():
-            print_rank_0(f"    Evaluating group {group_name}:")
-
-            result_dict_group = {}
-            for file in filelist:
-                dataset = self.build_dataset(file)
-                dataloader = build_data_loader(
-                    dataset,
-                    micro_batch_size=self.config.micro_batch_size,
-                    num_workers=1,
-                    drop_last=False,
-                    collate_fn=dataset.collate_fn if dataset.has_collate_fn else None,
-                )
-
-                prediction = []
-                with torch.no_grad():
-                    for _, batch in enumerate(dataloader):
-                        prediction.append(self.predict_single_batch(batch))
-
-                prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
-                result_list = self.CrowsPairMetric(prediction, dataset.data)
-                result_dict_group = (result_list, len(dataset))
-
-            result_dict_all[group_name] = result_dict_group
-
-        print_rank_0(f"Evaluation results of task {self.config.name}:")
-        if self.verbose:
-            for group_name, result_dict_group in result_dict_all.items():
-                self.report_group_metrics(group_name, result_dict_group)
-
-        print_rank_0(f"Finish task {self.config.name} in {time.time() - start:.1f}s.")"""
-
     def report_group_metrics(self, group_name, result_dict_group: Dict[str, Tuple[Dict[str, float], int]], level=1):
         for result in result_dict_group.values():
             result = result[0]
@@ -160,7 +89,6 @@ class CrowsPairDataset(MultiChoiceTaskDataset):
             get_tokenized_input(item, "choices"),
             item["label"],
         )
-        # "ID":example.ID,"bias_type":example.bias_type,"goal_label":goal_label
         pair_ID, sent_ID, bias_type = (
             item["pair_ID"],
             item["sent_ID"],

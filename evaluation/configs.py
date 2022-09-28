@@ -36,7 +36,7 @@ class BaseConfig(YAMLWizard):
 @dataclass
 class MultiChoiceTaskConfig(BaseConfig):
     module = "evaluation.MultiChoiceTask"
-    metrics: List[str] = field(default_factory=lambda: ["Accuracy","F1_mul"])
+    metrics: List[str] = field(default_factory=lambda: ["Accuracy"])
 
 
 @dataclass
