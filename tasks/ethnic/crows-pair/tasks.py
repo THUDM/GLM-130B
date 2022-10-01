@@ -1,17 +1,11 @@
-from typing import List
-from dataclasses import dataclass, field
-from evaluation import (
-    BaseTask,
-    MultiChoiceTask,
-    MultiChoiceTaskConfig,
-)
-from abc import ABC
 from os.path import join
-from evaluation.utils import print_rank_0
 from typing import Dict, Tuple, List
 from abc import ABC
 from collections import defaultdict
-from typing import List
+from evaluation import (
+    MultiChoiceTask,
+    MultiChoiceTaskConfig,
+)
 from evaluation.dataset import (
     MultiChoiceTaskDataset,
 )
@@ -68,7 +62,7 @@ class CrowsPairTask(MultiChoiceTask, ABC):
             for value1 in result.items():
                 value1 = value1[1]
                 for key, value in value1.items():
-                    print_rank_0("category:{cat}  score:{score}".format(cat=key, score=value * 100))
+                    print_rank_0("category:{cat}        score:{score}".format(cat=key, score=round(value * 100,2)))
 
 
 class CrowsPairDataset(MultiChoiceTaskDataset):

@@ -1,18 +1,12 @@
+from os.path import join
+from collections import defaultdict
+from abc import ABC
 import numpy as np
-from typing import List
+from typing import Dict, Tuple, List
 from evaluation import (
-    BaseTask,
     MultiChoiceTask,
     MultiChoiceTaskConfig,
 )
-from abc import ABC
-from os.path import join
-from evaluation.utils import print_rank_0
-import numpy as np
-from typing import Dict, Tuple, List
-from abc import ABC
-from collections import defaultdict
-from typing import List
 from evaluation.dataset import (
     MultiChoiceTaskDataset,
 )
@@ -44,13 +38,13 @@ class StereoSetTask(MultiChoiceTask, ABC):
             for result in tmp1.values():
                 print("LMS")
                 for key, val in result[0].items():
-                    print_rank_0("cat:{key}  score:{score}".format(key=key, score=round(val, 3)))
+                    print_rank_0("cat:{key}        score:{score}".format(key=key, score=round(val, 2)))
                 print("SS")
                 for key, val in result[1].items():
-                    print_rank_0("cat:{key}  score:{score}".format(key=key, score=round(val, 3)))
+                    print_rank_0("cat:{key}        score:{score}".format(key=key, score=round(val, 2)))
                 print("ICAT")
                 for key, val in result[2].items():
-                    print_rank_0("cat:{key}  score:{score}".format(key=key, score=round(val, 3)))
+                    print_rank_0("cat:{key}        score:{score}".format(key=key, score=round(val, 2)))
 
     def StereoSetMetric(self, predictions, examples):
         print_rank_0("Special metric for StereoSet")
