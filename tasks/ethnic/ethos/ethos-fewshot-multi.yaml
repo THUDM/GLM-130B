@@ -1,0 +1,7 @@
+name: "ETHOS_fewshot_multi"
+type: "mul"
+path: "data"
+file-pattern:
+  test: "**/ethos-few-shot-multi.jsonl"
+
+micro-batch-size: 32
