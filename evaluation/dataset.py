@@ -236,15 +236,11 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         tokenizer = get_tokenizer()
 
         sop_id = tokenizer.get_command("sop")
-        if use_task_mask == False:
-            mask_id = tokenizer.get_command("[MASK]")
-        else:
-            mask_id = tokenizer.get_command("[gMASK]")
+        mask_id = tokenizer.get_command("[gMASK]") if use_task_mask else tokenizer.get_command("[MASK]")
 
         token = np.array(text, dtype=np.int64)
         target = np.array(text, dtype=np.int64)
         position_id = np.arange(len(text), dtype=np.int64)
-
         choice_target_id = []
 
         blank_filling = mask_id in text
@@ -273,9 +269,7 @@ class MultiChoiceTaskDataset(EvaluationDataset):
                 position_id = np.concatenate(
                     (
                         position_id,
-                        np.arange(division, division + len(choice), dtype=np.int64)
-                        if blank_filling or not unified_multitask_encoding
-                        else np.arange(mask_position, mask_position + len(choice), dtype=np.int64),
+                        np.arange(division, division + len(choice), dtype=np.int64),
                     )
                 )
 
