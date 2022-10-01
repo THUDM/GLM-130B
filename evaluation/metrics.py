@@ -3,13 +3,14 @@ import math
 import string
 import functools
 
+import torch
 import numpy as np
 
 from typing import Tuple, List
 from collections import Counter
 from collections import defaultdict
 from SwissArmyTransformer import get_tokenizer
-import torch
+
 from .utils import print_rank_0
 
 
@@ -104,10 +105,7 @@ def qa_evaluate(predictions, examples, metric):
 
     score = 0.0
     for example, prediction in zip(examples, predictions):
-        # print(example)
-        ground_truths = [
-            tokenizer.tokenizer.decode(target) for target in example["targets"]
-        ]
+        ground_truths = [tokenizer.tokenizer.decode(target) for target in example["targets"]]
         prediction = tokenizer.tokenizer.decode(prediction)
         if ground_truths:
             score += metric_max_over_ground_truths(metric, prediction, ground_truths)
@@ -137,8 +135,6 @@ DEFAULT_METRICS.update(
         "PPL": calculate_perplexity,
         "Precision": precision_metric,
         "Recall": recall_metric,
+        "F1_mul": F1_metric,
     }
 )
-ADD_METRICS = {"F1_mul": F1_metric}
-
-DEFAULT_METRICS.update(ADD_METRICS)
