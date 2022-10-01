@@ -1,4 +1,3 @@
-
 import torch
 
 from typing import List, Union
@@ -196,5 +195,4 @@ class ModelForEvaluation(torch.nn.Module):
 
         self.model.transformer.parallel_output = original_parallel_output
 
-        # return list(zip(loss.tolist(), loss_masks.sum(dim=-1).tolist()))
         return loss.tolist()
