@@ -230,11 +230,13 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         }
 
     @staticmethod
-    def build_multiple_choice_sample(text, choices, is_single_token, unified_multitask_encoding=False):
+    def build_multiple_choice_sample(
+        text, choices, is_single_token, unified_multitask_encoding=False, use_task_mask=False
+    ):
         tokenizer = get_tokenizer()
 
         sop_id = tokenizer.get_command("sop")
-        mask_id = tokenizer.get_command("[MASK]")
+        mask_id = tokenizer.get_command("[gMASK]") if use_task_mask else tokenizer.get_command("[MASK]")
 
         token = np.array(text, dtype=np.int64)
         target = np.array(text, dtype=np.int64)
@@ -254,14 +256,23 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         attention_mask = [np.ones((len(token), len(token)), dtype=np.int64)]
 
         for choice in choices:
-            position_id = np.concatenate(
-                (
-                    position_id,
-                    [mask_position] * len(choice)
-                    if blank_filling or not unified_multitask_encoding
-                    else np.arange(mask_position, mask_position + len(choice), dtype=np.int64),
+            if use_task_mask == False:
+                position_id = np.concatenate(
+                    (
+                        position_id,
+                        [mask_position] * len(choice)
+                        if blank_filling or not unified_multitask_encoding
+                        else np.arange(mask_position, mask_position + len(choice), dtype=np.int64),
+                    )
                 )
-            )
+            else:
+                position_id = np.concatenate(
+                    (
+                        position_id,
+                        np.arange(division, division + len(choice), dtype=np.int64),
+                    )
+                )
+
             choice_target_id.append(np.arange(len(token), len(token) + len(choice), dtype=np.int64))
             attention_mask.append(np.tril(np.ones((len(choice), len(choice)), dtype=np.int64)))
             token = np.concatenate((token, [sop_id], choice[:-1]))
@@ -292,6 +303,7 @@ class MultiChoiceTaskDataset(EvaluationDataset):
             item["choices"],
             is_single_token=self.is_single_token,
             unified_multitask_encoding=self.config.use_multitask_encoding,
+            use_task_mask=self.config.use_task_mask,
         )
         sample["label"] = item["label"]
         return sample
