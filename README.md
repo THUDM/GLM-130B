@@ -1,7 +1,7 @@
 <img src="resources/7D6433A42D189E2E6FBC62BE066BCE91.png">
 
 <p align="center">
-   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/THUDM/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 📃 <a href="http://arxiv.org/abs/2210.02414" target="_blank">Paper</a><br>
+   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/THUDM/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 📃 <a href="https://arxiv.org/abs/2210.02414" target="_blank">Paper</a><br>
 </p>
 
 <p align="center">
