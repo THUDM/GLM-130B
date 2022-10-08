@@ -203,3 +203,28 @@ Zhipu.AI
 ## License
 
 This repository is licensed under the [Apache-2.0 license](LICENSE). The use of GLM-130B model weights is subject to the [Model License](MODEL_LICENSE).
+
+## Citation
+
+If you find our work useful, please consider citing GLM-130B:
+
+```
+@article{zeng2022glm130b,
+  title={GLM-130B: An Open Bilingual Pre-trained Model},
+  author={Aohan Zeng and Xiao Liu and Zhengxiao Du and Zihan Wang and Hanyu Lai and Ming Ding and Zhuoyi Yang and Yifan Xu and Wendi Zheng and Xiao Xia and Weng Lam Tam and Zixuan Ma and Yufei Xue and Jidong Zhai and Wenguang Chen and P. Zhang and Yuxiao Dong and Jie Tang},
+  journal={arXiv preprint arXiv:2210.02414},
+  year={2022}
+}
+```
+
+You may also consider GLM's original work in your reference:
+
+```
+@inproceedings{du2022glm,
+  title={GLM: General Language Model Pretraining with Autoregressive Blank Infilling},
+  author={Du, Zhengxiao and Qian, Yujie and Liu, Xiao and Ding, Ming and Qiu, Jiezhong and Yang, Zhilin and Tang, Jie},
+  booktitle={Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  pages={320--335},
+  year={2022}
+}
+```
