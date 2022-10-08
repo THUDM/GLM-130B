@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-   💬 <a href="https://groups.google.com/g/glm-130b-forum" target="_blank">Google Group</a> (Updates) or <a href="https://join.slack.com/t/glm-130b/shared_invite/zt-1f2ih11xy-EAuDComTAr~XVB3MywE9Cg" target="_blank">Slack channel</a> (Discussions)
+   💬 <a href="https://groups.google.com/g/glm-130b-forum" target="_blank">Google Group</a> (Updates) or <a href="https://github.com/THUDM/GLM-130B/blob/main/resources/WechatGroup.jpeg" target="_blank">Wechat Group</a> or <a href="https://join.slack.com/t/glm-130b/shared_invite/zt-1f2ih11xy-EAuDComTAr~XVB3MywE9Cg" target="_blank">Slack channel</a> (Discussions)
 </p>
 
 # GLM-130B: An Open Bilingual Pre-Trained Model
