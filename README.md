@@ -211,7 +211,7 @@ If you find our work useful, please consider citing GLM-130B:
 ```
 @article{zeng2022glm130b,
   title={GLM-130B: An Open Bilingual Pre-trained Model},
-  author={Aohan Zeng and Xiao Liu and Zhengxiao Du and Zihan Wang and Hanyu Lai and Ming Ding and Zhuoyi Yang and Yifan Xu and Wendi Zheng and Xiao Xia and Weng Lam Tam and Zixuan Ma and Yufei Xue and Jidong Zhai and Wenguang Chen and P. Zhang and Yuxiao Dong and Jie Tang},
+  author={Zeng, Aohan and Liu, Xiao and Du, Zhengxiao and Wang, Zihan and Lai, Hanyu and Ding, Ming and Yang, Zhuoyi and Xu, Yifan and Zheng, Wendi and Xia, Xiao and Tam, Weng Lam and Ma, Zixuan and Xue, Yufei and Zhai, Jidong and Chen, Wenguang and Zhang, Peng and Dong, Yuxiao and Tang, Jie},
   journal={arXiv preprint arXiv:2210.02414},
   year={2022}
 }
