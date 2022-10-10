@@ -1,11 +1,11 @@
 <img src="resources/7D6433A42D189E2E6FBC62BE066BCE91.png">
 
 <p align="center">
-   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/THUDM/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 📃 <a href="http://arxiv.org/abs/2210.02414" target="_blank">Paper</a><br>
+   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/THUDM/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 📃 <a href="https://arxiv.org/abs/2210.02414" target="_blank">Paper</a><br>
 </p>
 
 <p align="center">
-   💬 <a href="https://groups.google.com/g/glm-130b-forum" target="_blank">Google Group</a> (Updates) or <a href="https://join.slack.com/t/glm-130b/shared_invite/zt-1f2ih11xy-EAuDComTAr~XVB3MywE9Cg" target="_blank">Slack channel</a> (Discussions)
+   💬 <a href="https://groups.google.com/g/glm-130b-forum" target="_blank">Google Group</a> (Updates) or <a href="https://github.com/THUDM/GLM-130B/blob/main/resources/WechatGroup.jpeg" target="_blank">Wechat Group</a> or <a href="https://join.slack.com/t/glm-130b/shared_invite/zt-1f2ih11xy-EAuDComTAr~XVB3MywE9Cg" target="_blank">Slack channel</a> (Discussions)
 </p>
 
 # GLM-130B: An Open Bilingual Pre-Trained Model
@@ -203,3 +203,28 @@ Zhipu.AI
 ## License
 
 This repository is licensed under the [Apache-2.0 license](LICENSE). The use of GLM-130B model weights is subject to the [Model License](MODEL_LICENSE).
+
+## Citation
+
+If you find our work useful, please consider citing GLM-130B:
+
+```
+@article{zeng2022glm130b,
+  title={GLM-130B: An Open Bilingual Pre-trained Model},
+  author={Zeng, Aohan and Liu, Xiao and Du, Zhengxiao and Wang, Zihan and Lai, Hanyu and Ding, Ming and Yang, Zhuoyi and Xu, Yifan and Zheng, Wendi and Xia, Xiao and Tam, Weng Lam and Ma, Zixuan and Xue, Yufei and Zhai, Jidong and Chen, Wenguang and Zhang, Peng and Dong, Yuxiao and Tang, Jie},
+  journal={arXiv preprint arXiv:2210.02414},
+  year={2022}
+}
+```
+
+You may also consider GLM's original work in your reference:
+
+```
+@inproceedings{du2022glm,
+  title={GLM: General Language Model Pretraining with Autoregressive Blank Infilling},
+  author={Du, Zhengxiao and Qian, Yujie and Liu, Xiao and Ding, Ming and Qiu, Jiezhong and Yang, Zhilin and Tang, Jie},
+  booktitle={Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  pages={320--335},
+  year={2022}
+}
+```
