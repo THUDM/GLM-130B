@@ -117,7 +117,7 @@ def create_checkpoint(
                 is_glu=name in GLU_LAYERS,
                 quantization_bit_width=quantization_bit_width if name in QUANTIZED_LAYERS else None,
             )
-            if name in QUANTIZED_LAYERS:
+            if quantization_bit_width is not None and name in QUANTIZED_LAYERS:
                 new_sd[key], new_sd[f"{key}_scale"] = new_sd[key]
     new_sd = {"module": new_sd}
     return new_sd
