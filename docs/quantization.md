@@ -16,6 +16,8 @@ python tools/convert_tp.py \
 ```
 
 Finally, change the model config file from `configs/model_glm_130b.sh` to `configs/model_glm_130b_{int4/int8}.sh` in your scripts (e.g. `scripts/generate.sh`), then run your scripts just as normal.
+ 
+By default, the full precision checkpoint is expected to be loaded. Run the conversion script with `--quantization-bit-width <4 or 8>` will produce quantized model weights. To load from a quantized checkpoint, you should add `--from-quantized-checkpoint` in your model config file.
 
 ## Evaluation Results
 
