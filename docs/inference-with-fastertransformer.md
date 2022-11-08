@@ -14,7 +14,18 @@ We adapted the GLM-130B based on Fastertransformer for fast inference, with deta
 - Python 3 is recommended because some features are not supported in python 2
 - PyTorch: Verify on 1.10.1, >= 1.8.0 should work.
 
-All the packages can be installed using conda, we also recommend use nvcr image like `nvcr.io/nvidia/pytorch:21.09-py3`.
+### Setup Using Docker
+
+We recommend use nvcr image like `nvcr.io/nvidia/pytorch:21.09-py3` with [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
+
+```bash
+docker run -it --rm --gpus all nvcr.io/nvidia/pytorch:21.09-py3 /bin/bash
+conda install -y pybind11
+```
+
+### Setup Using Conda
+
+As another way, all the packages can be installed using conda.
 
 > Some of our current [structure](https://github.com/THUDM/FasterTransformer/blob/main/src/fastertransformer/th_op/glm/GlmOp.h#L30) requires that `g++` and `libtorch` produce the same results, so a pre-compiled `libtorch` may only work with `g++-7` or `g++-9`. And although GLM-130B itself does not rely on openmpi, FasterTransformer requires it during the build process. We are working on these issues.
 
@@ -44,7 +55,6 @@ Get the code and install all dependencies:
 git clone https://github.com/THUDM/FasterTransformer.git
 mkdir -p FasterTransformer/build
 cd FasterTransformer/build
-git submodule init && git submodule update
 pip3 install icetk transformers
 ```
 
