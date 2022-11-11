@@ -1,0 +1,11 @@
+name: "e2eNLGEgen"
+type: "gen"
+path: "clean-e2e-nlg/"
+module: "tasks.clean-e2e-nlg.task.E2E"
+file-pattern:
+  test: "**/test.jsonl"
+
+num_beams: 16
+max_gen_length: 64
+use_task_mask: true
+micro-batch-size: 16
