@@ -25,6 +25,7 @@ class BaseConfig(YAMLWizard):
     use_multitask_encoding: bool = False  # Not supported now
     unidirectional: bool = False  # Whether to use unidirectional attention
     max_seq_length: int = 2048  # Max sequence length
+    no_tokenized: bool = False
     file_pattern: str | Dict[str, str] = "**/*.json*"  # Organize data file in groups
 
     micro_batch_size: int = 1  # 'gen' task only support mbs = 1 for now

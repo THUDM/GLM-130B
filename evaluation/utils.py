@@ -52,8 +52,8 @@ def gather_result(prediction, total_length, micro_batch_size):
     return prediction
 
 
-def get_tokenized_input(item, key):
-    if key in item:
+def get_tokenized_input(item, key, no_tokenized=False):
+    if key in item and not no_tokenized:
         return item[key]
     tokenizer = get_tokenizer()
     pretokenized_key = key + "_pretokenized"

@@ -7,4 +7,6 @@ file-pattern:
   social_sciences: "social_sciences/*.json"
   humanities: "humanities/*.json"
   other: "other/*.json"
-micro-batch-size: 1
+no-tokenized: true
+micro-batch-size: 8
+max_seq-length: 896

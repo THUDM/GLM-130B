@@ -77,7 +77,8 @@ def initialize_model_and_tokenizer(args):
     # Load checkpoint
     torch.distributed.barrier()
     start = time.time()
-    load_checkpoint(model, args)
+    if args.load:
+        load_checkpoint(model, args)
     torch.distributed.barrier()
     if torch.distributed.get_rank() == 0:
         print(f"> Checkpoint loaded in {time.time() - start:.1f}s")
