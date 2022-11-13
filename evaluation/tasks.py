@@ -14,7 +14,7 @@ from SwissArmyTransformer.tokenization.icetk_glm_130B.ice_tokenizer import _IceT
 from generation import BaseStrategy, BeamSearchStrategy
 from .configs import BaseConfig, GenerationTaskConfig, MultiChoiceTaskConfig, LanguageModelTaskConfig
 from .model import ModelForEvaluation
-from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset
+from .dataset import EvaluationDataset, GenerationTaskDataset, MultiChoiceTaskDataset, LanguageModelTaskDataset, SmallGenerationTaskDataset
 from .utils import build_data_loader, gather_result, print_rank_0
 from .metrics import DEFAULT_METRICS
 
@@ -163,7 +163,7 @@ class GenerationTask(BaseTask, ABC):
         return GenerationTaskConfig
 
     def build_dataset(self, relative_path):
-        return GenerationTaskDataset(join(self.config.path, relative_path), self.config)
+        return SmallGenerationTaskDataset(join(self.config.path, relative_path), self.config)
 
     def __init__(self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: GenerationTaskConfig):
         super(GenerationTask, self).__init__(model, tokenizer, config)

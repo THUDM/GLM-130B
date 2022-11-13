@@ -72,8 +72,8 @@ def qa_evaluate(predictions, examples, metric):
 
     score = 0.0
     for example, prediction in zip(examples, predictions):
-        ground_truths = [tokenizer.tokenizer.decode(target) for target in example["targets"]]
-        prediction = tokenizer.tokenizer.decode(prediction)
+        ground_truths = [tokenizer.detokenize(target) for target in example["targets"]]
+        prediction = tokenizer.detokenize(prediction)
         if ground_truths:
             score += metric_max_over_ground_truths(metric, prediction, ground_truths)
     score = 100.0 * score / len(predictions)

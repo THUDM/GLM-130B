@@ -42,7 +42,7 @@ class MultiChoiceTaskConfig(BaseConfig):
 @dataclass
 class GenerationTaskConfig(BaseConfig):
     module = "evaluation.GenerationTask"
-    metrics: List[str] = field(default_factory=lambda: ["EM", "F1"])
+    metrics: List[str] = field(default_factory=lambda: [])
     sampling_strategy: str = "BaseStrategy"
     num_beams: int = 4
     length_penalty: float = 1.0

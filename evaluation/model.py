@@ -66,7 +66,8 @@ def batch_filling_sequence(
         tokens, mems = strategy.forward(logits, tokens, mems)
         if len(tokens.shape) == 3 and num_beams == 1:
             num_beams = tokens.shape[1]
-            position_ids = position_ids.unsqueeze(1).expand(batch_size, num_beams, -1).reshape(batch_size * num_beams, -1)
+            tail_size = position_ids.shape[1:]
+            position_ids = position_ids.unsqueeze(1).expand(batch_size, num_beams, *tail_size).reshape(batch_size * num_beams, *tail_size)
             attention_mask_shape = attention_mask.shape[-3:]
             attention_mask = attention_mask.unsqueeze(1).expand(batch_size, num_beams, -1, -1, -1).reshape(
                 batch_size * num_beams, *attention_mask_shape)
