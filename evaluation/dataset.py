@@ -58,6 +58,7 @@ class EvaluationDataset(torch.utils.data.Dataset, ABC):
     def has_collate_fn(self) -> bool:
         return False
 
+    @staticmethod
     def collate_fn(self, samples):
         return None
 
@@ -89,7 +90,8 @@ class GenerationTaskDataset(EvaluationDataset):
     def has_collate_fn(self) -> bool:
         return True
 
-    def collate_fn(self, samples):
+    @staticmethod
+    def collate_fn(samples):
         TILE = 32
         length_to_pad = (max(map(lambda spl: len(spl["token"]), samples)) + TILE - 1) // TILE * TILE
 
@@ -157,14 +159,12 @@ class GenerationTaskDataset(EvaluationDataset):
 
     def __getitem__(self, idx):
         item = self.data[idx]
-        sample = self.build_generation_sample(
+        return self.build_generation_sample(
             item["text"],
             max_gen_length=self.config.max_gen_length,
             use_task_mask=self.config.use_task_mask,
             unidirectional=self.config.unidirectional,
         )
-        sample["targets"] = [np.array(target, dtype=self.dtype) for target in item["targets"]]
-        return sample
 
 
 class MultiChoiceTaskDataset(EvaluationDataset):
@@ -178,13 +178,15 @@ class MultiChoiceTaskDataset(EvaluationDataset):
     def has_collate_fn(self) -> bool:
         return True
 
-    def collate_fn(self, samples):
+    @staticmethod
+    def collate_fn(samples):
         TILE = 32
         length_to_pad = (max(map(lambda spl: len(spl["token"]), samples)) + TILE - 1) // TILE * TILE
 
         token_batch, position_id_batch, attention_mask_batch = [], [], []
         choices_batch, choice_target_ids_batch = [], []
 
+        is_single_token = True
         for sample in samples:
             token, position_id, attention_mask = pad_batch(
                 sample["token"], sample["position_id"], sample["attention_mask"], length_to_pad
@@ -194,6 +196,8 @@ class MultiChoiceTaskDataset(EvaluationDataset):
             attention_mask_batch.append(attention_mask)
             choices_batch.append(sample["choices"])
             choice_target_ids_batch.append(sample["choice_target_ids"])
+            if isinstance(sample["choice_target_ids"], list):
+                is_single_token = False
 
         return {
             "tokens": torch.tensor(np.array(token_batch), dtype=torch.int64),
@@ -201,7 +205,7 @@ class MultiChoiceTaskDataset(EvaluationDataset):
             "attention_mask": torch.tensor(np.array(attention_mask_batch), dtype=torch.int64) < 0.5,
             "choices": choices_batch,
             "choice_target_ids": choice_target_ids_batch,
-            "is_single_token": self.is_single_token,
+            "is_single_token": is_single_token,
         }
 
     def process_single_item(self, item):
@@ -303,15 +307,13 @@ class MultiChoiceTaskDataset(EvaluationDataset):
 
     def __getitem__(self, idx):
         item = self.data[idx]
-        sample = self.build_multiple_choice_sample(
+        return self.build_multiple_choice_sample(
             item["text"],
             item["choices"],
             is_single_token=self.is_single_token,
             unified_multitask_encoding=self.config.use_multitask_encoding,
             use_task_mask=self.config.use_task_mask,
         )
-        sample["label"] = item["label"]
-        return sample
 
 
 class LanguageModelTaskDataset(EvaluationDataset):
