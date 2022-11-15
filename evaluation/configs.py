@@ -50,6 +50,7 @@ class GenerationTaskConfig(BaseConfig):
     no_repeat_ngram_size: int = 3
     min_gen_length: int = 0
     max_gen_length: int = 128
+    deterministic: bool = False
     end_tokens: List[str] = field(default_factory=lambda: [])
 
 
