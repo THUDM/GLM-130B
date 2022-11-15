@@ -1,0 +1,8 @@
+name: "CROWS"
+type: "mul"
+path: "data"
+module:  "tasks.ethnic.crows-pair.tasks.CrowsPairTask"
+file-pattern:
+  test: "**/crows-pair-dataset.jsonl"
+
+micro-batch-size: 1

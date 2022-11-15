@@ -72,7 +72,7 @@ The default metrics for the generation task are EM(Exact-Match) and F1. Given in
 
 ## Implement Your Metrics
 
-You can customize your evaluation metrics function and add it to `DEFAULT_METRICS` in `generation/metrics.py`, and then you can specify `metric: ['Your metric name']` in the task YAML file.
+You can customize your evaluation metrics function and add it to `DEFAULT_METRICS` in `evaluation/metrics.py`, and then you can specify `metric: ['Your metric name']` in the task YAML file.
 
 ## Fully customize the evaluation process
 

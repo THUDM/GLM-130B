@@ -1,0 +1,8 @@
+name: "Penn Treebank"
+type: "lm"
+path: "ptbdataset"
+file-pattern:
+  test: "**/ptb.test.txt"
+
+generation-length: 256
+use_task_mask: true

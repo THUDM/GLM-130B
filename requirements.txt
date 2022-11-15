@@ -1,5 +1,6 @@
-SwissArmyTransformer>=0.2.11
+SwissArmyTransformer>=0.2.12
 icetk
 apex
 scipy
 dataclass_wizard
+cpm_kernels

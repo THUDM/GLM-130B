@@ -1,0 +1,8 @@
+name: "WikiText-2"
+type: "lm"
+path: "wikitext-2"
+file-pattern:
+  test: "**/wiki.test.tokens"
+
+generation-length: 256
+use_task_mask: true

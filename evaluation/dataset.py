@@ -1,16 +1,19 @@
 import os
+import math
 import json
 
 import numpy as np
 import torch
 
-from typing import List
+from typing import List, Union
 from abc import ABC, abstractmethod
 from scipy.linalg import block_diag
+from itertools import accumulate
+from bisect import bisect_right
 
 from SwissArmyTransformer import get_tokenizer
 
-from .configs import BaseConfig, MultiChoiceTaskConfig, GenerationTaskConfig
+from .configs import BaseConfig, MultiChoiceTaskConfig, GenerationTaskConfig, LanguageModelTaskConfig
 from .utils import get_tokenized_input
 
 
@@ -36,15 +39,15 @@ class EvaluationDataset(torch.utils.data.Dataset, ABC):
     If [MASK] not in context, will append [MASK] after text
     """
 
-    def __init__(self, path, config: BaseConfig):
-        self.path = path
+    def __init__(self, path: Union[str, List[str]], config: BaseConfig):
+        self.path = path if isinstance(path, list) else [path]
         self.config = config
         self.max_seq_length = self.config.max_seq_length
         self.dtype = np.int64
 
-        tokenizer = get_tokenizer(tokenizer_type="icetk-glm-130B")
-        self.mask_id = tokenizer.get_command("[MASK]")
-        self.gmask_id = tokenizer.get_command("[gMASK]")
+        self.tokenizer = get_tokenizer()
+        self.mask_id = self.tokenizer.get_command("[MASK]")
+        self.gmask_id = self.tokenizer.get_command("[gMASK]")
 
         self.data = []
         for p in self.path:
@@ -90,6 +93,34 @@ class GenerationTaskDataset(EvaluationDataset):
             text = text[len(text) - text_length : len(text)]
         return [{"text": text, "targets": targets, **kwargs}]
 
+    @property
+    def has_collate_fn(self) -> bool:
+        return True
+
+    def collate_fn(self, samples):
+        TILE = 32
+        length_to_pad = (max(map(lambda spl: len(spl["token"]), samples)) + TILE - 1) // TILE * TILE
+
+        token_batch, position_id_batch, attention_mask_batch = [], [], []
+        context_length_batch, target_position_id_batch = [], []
+
+        for sample in samples:
+            token, position_id, attention_mask = pad_batch(
+                sample["token"], sample["position_id"], sample["attention_mask"], length_to_pad
+            )
+            token_batch.append(token)
+            position_id_batch.append(position_id)
+            attention_mask_batch.append(attention_mask)
+            context_length_batch.append(sample['context_length'])
+            target_position_id_batch.append(sample['target_position_id'])
+        return {
+            "tokens": torch.tensor(np.array(token_batch), dtype=torch.int64),
+            "position_ids": torch.tensor(np.array(position_id_batch), dtype=torch.int64),
+            "attention_mask": torch.tensor(np.array(attention_mask_batch), dtype=torch.int64) < 0.5,
+            "context_length": torch.tensor(context_length_batch, dtype=torch.int64),
+            "target_position_ids": torch.tensor(np.array(target_position_id_batch), dtype=torch.int64),
+        }
+
     @staticmethod
     def build_generation_sample(text, max_gen_length, use_task_mask, unidirectional=True):
         tokenizer = get_tokenizer()
@@ -112,20 +143,22 @@ class GenerationTaskDataset(EvaluationDataset):
             else:
                 token = np.concatenate((token, [mask_id, sop_id]))
         context_length = len(token)
-        max_seq_length = context_length + max_gen_length
 
-        position_id = np.arange(0, max_seq_length, dtype=np.int64)
+        position_id = np.arange(0, context_length, dtype=np.int64)
+        target_position_id = np.arange(context_length, context_length + max_gen_length, dtype=np.int64)
         if not use_task_mask:
-            position_id[context_length - 1 :] = mask_position
+            position_id[context_length - 1:] = mask_position
+            target_position_id[:] = mask_position
 
-        attention_mask = np.tril(np.ones((max_seq_length, max_seq_length), dtype=np.int64))
+        attention_mask = np.tril(np.ones((context_length, context_length), dtype=np.int64))
         if not unidirectional:
             attention_mask[: context_length - 1, : context_length - 1] = 1
 
         item = {
-            "tokens": np.concatenate((token, np.zeros(max_seq_length - len(token), dtype=np.int64))),
-            "position_ids": position_id,
-            "attention_mask": attention_mask < 0.5,
+            "token": token,
+            "position_id": position_id,
+            "target_position_id": target_position_id,
+            "attention_mask": attention_mask,
             "context_length": context_length,
         }
         return item
@@ -292,3 +325,65 @@ class MultiChoiceTaskDataset(EvaluationDataset):
         )
         sample["label"] = item["label"]
         return sample
+
+
+class LanguageModelTaskDataset(EvaluationDataset):
+    config: LanguageModelTaskConfig
+    left_weights: List[int]
+    weights: List[int]
+
+    def process_single_file(self, path):
+        num_sequences = []
+        with open(os.path.join(path), "r", encoding="utf-8") as file:
+            raw_text = file.read()
+            tokens = self.tokenizer.tokenize(raw_text)
+            self.data.append(
+                {
+                    "raw_text": tokens,
+                    "num_original_tokens": len(raw_text.strip().split(" ")),
+                    "num_sequences": max(
+                        math.ceil(
+                            max(len(tokens) - (self.config.max_seq_length - 1), 0) / self.config.generation_length
+                        )
+                        + 1,
+                        1,
+                    ),
+                }
+            )
+            num_sequences.append(self.data[-1]["num_sequences"])
+        self.weights = list(accumulate(num_sequences))
+        self.left_weights = [0] + self.weights[:-1]
+
+    def process_single_item(self, item):
+        pass
+
+    def __len__(self):
+        return self.data[0]["num_sequences"]
+
+    def __getitem__(self, idx):
+        document_idx = bisect_right(self.weights, idx)
+        idx = idx - self.left_weights[document_idx]
+        start_idx = idx * self.config.generation_length
+        end_idx = start_idx + self.config.max_seq_length - 1  # for additional [gMASK]
+        tokens = self.data[document_idx]["raw_text"][start_idx:end_idx]
+
+        mask_id = self.gmask_id if self.config.use_task_mask else self.mask_id
+        sop_id = self.tokenizer.get_command("sop")
+
+        if idx == 0 or self.config.unidirectional:
+            prompt, text = [], tokens
+        else:
+            prompt_length = self.config.max_seq_length - 1 - self.config.generation_length
+            prompt, text = tokens[:prompt_length], tokens[prompt_length:]
+
+        seq_length = len(prompt) + len(text) + 1
+        attention_mask = np.tril(np.ones((seq_length, seq_length), dtype=np.int64))
+        attention_mask[: len(prompt) + 1, : len(prompt) + 1] = 1
+
+        return {
+            "tokens": np.array(prompt + [mask_id, sop_id] + text[:-1], dtype=np.int64),
+            "targets": np.array(prompt + [mask_id] + text, dtype=np.int64),
+            "position_ids": np.arange(0, seq_length, dtype=np.int64),
+            "attention_mask": attention_mask < 0.5,
+            "loss_masks": np.array([0] * (len(prompt) + 1) + [1] * len(text), dtype=np.int64),
+        }

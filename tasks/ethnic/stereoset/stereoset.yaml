@@ -1,0 +1,9 @@
+name: "StereoSet"
+type: "mul"
+path: "data"
+module: "tasks.ethnic.stereoset.tasks.StereoSetTask"
+use_task_mask: True
+file-pattern:
+  test: "**/stereoset-dataset.jsonl"
+
+micro-batch-size: 64

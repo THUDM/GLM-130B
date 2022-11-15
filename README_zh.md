@@ -1,7 +1,7 @@
 <img src="resources/7D6433A42D189E2E6FBC62BE066BCE91.png">
 
 <p align="center">
-   🌐 <a href="https://models.aminer.cn/glm-130b/" target="_blank">博客</a> • ⏬ <a href="https://models.aminer.cn/glm/zh-CN/download/GLM-130B" target="_blank">下载模型</a> • 🪧 <a href="https://huggingface.co/spaces/hanyullai/GLM-130B" target="_blank">样例演示</a> • 💬 <a href="https://github.com/THUDM/GLM-130B/discussions">讨论</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">邮箱</a>
+   🌐 <a href="https://models.aminer.cn/glm-130b/" target="_blank">博客</a> • ⏬ <a href="https://models.aminer.cn/glm/zh-CN/download/GLM-130B" target="_blank">下载模型</a> • 🪧 <a href="https://huggingface.co/spaces/hanyullai/GLM-130B" target="_blank">样例演示</a> • 💬 <a href="https://github.com/THUDM/GLM-130B/discussions">讨论</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">邮箱</a> • 💬 <a href="https://groups.google.com/g/glm-130b-forum" target="_blank">谷歌群组</a> or <a href="https://github.com/Xiao9905" target="_blank">微信群</a>
  • 📃 论文（敬请期待） <br>
 </p>
 
