@@ -16,7 +16,6 @@ class BaseStrategy:
             end_tokens = []
         self.end_tokens = end_tokens
         self.deterministic = deterministic
-        print(self.deterministic)
         self._is_done = np.zeros(self.batch_size, dtype=np.bool)
 
     @property
