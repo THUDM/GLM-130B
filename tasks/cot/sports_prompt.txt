@@ -1,5 +1,5 @@
-Q: Is the following sentence plausible? "Kyle Palmier was called for slashing."
-A: Kyle Palmier is a hockey player. Being called for slashing is part of hockey. So the answer is yes.
+Q: Is the following sentence plausible? "Kyle Palmieri was called for slashing."
+A: Kyle Palmieri is a hockey player. Being called for slashing is part of hockey. So the answer is yes.
 Q: Is the following sentence plausible? "Joao Moutinho caught the screen pass in the NFC championship."
 A: Joao Moutinho is a soccer player. The NFC championship is part of American football, not soccer. So the answer is no.
 Q: Is the following sentence plausible? "Carson Wentz set the pick and roll."
