@@ -1,0 +1,16 @@
+Q: Reverse the sequence "cigar, umbrella, key, gum, alarm".
+A: First is cigar. Second is umbrella. Third is key. Fourth is gum. Fifth is alarm. Now to reverse, change the order to: Fifth is alarm. Fourth is gum. Third is key. Second is umbrella. First is cigar. So the answer is "alarm, gum, key, umbrella, cigar"
+Q: Reverse the sequence "player, passport, umbrella, bottle, watch".
+A: First is player. Second is passport. Third is umbrella. Fourth is bottle. Fifth is watch. Now to reverse, change the order to: Fifth is watch. Fourth is bottle. Third is umbrella. Second is passport. First is player. So the answer is "watch, bottle, umbrella, passport, player"
+Q: Reverse the sequence "coin, postcard, case, pen, wallet".
+A: First is coin. Second is postcard. Third is case. Fourth is pen. Fifth is wallet. Now to reverse, change the order to: Fifth is wallet. Fourth is pen. Third is case. Second is postcard. First is coin. So the answer is "wallet, pen, case, postcard, coin".
+Q: Reverse the sequence "laptop, lipstick, pen, bin, clock".
+A: First is laptop. Second is lipstick. Third is pen. Fourth is bin. Fifth is clock. Now to reverse, change the order to: Fifth is clock. Fourth is bin. Third is pen. Second is lipstick. First is laptop. So the answer is "clock, bin, pen, lipstick, laptop"
+Q: Reverse the sequence "key, pen, screen, file, cigar".
+A: First is key. Second is pen. Third is screen. Fourth is file. Fifth is cigar. Now to reverse, change the order to: Fifth is cigar. Fourth is file. Third is screen. Second is pen. First is key. So the answer is "cigar, file, screen, pen, key".
+Q: Reverse the sequence "card, stamp, book, water, glasses"
+A: First is card. Second is stamp. Third is book. Fourth is water. Fifth is glasses. Now to reverse, change the order to: Fifth is glasses. Fourth is water. Third is book. Second is stamp. First is card. The answer is "glasses, water, book, stamp, card".
+Q: Reverse the sequence "clock, coin, bottle, head, postcard".
+A: First is clock. Second is coin. Third is bottle. Fourth is head. Fifth is postcard. Now to reverse, change the order to: Fifth is postcard. Fourth is head. Third is bottle. Second is coin. First is clock. So the answer is "postcard, head, bottle, coin, clock".
+Q: Reverse the sequence "battery, glasses, lighter, water, scissors".
+A: First is battery. Second is glasses. Third is lighter. Fourth is water. Fifth is scissors. Now to reverse, change the order to: Fifth is scissors. Fourth is water. Third is lighter. Second is glasses. First is battery. So the answer is "scissors, water, lighter, glasses, battery".

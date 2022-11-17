@@ -85,6 +85,17 @@ def extract_answer(prediction, task_name, chain_of_thought=True):
             answer = match.group(0)
         else:
             answer = ""
+    elif task_name.startswith("reverse"):
+        prediction = prediction.lower()
+        if chain_of_thought:
+            pattern = r'(?<=the answer is ")[a-z|,| ]+'
+        else:
+            pattern = r'[a-z|,| ]+'
+        match = re.search(pattern, prediction)
+        if match:
+            answer = match.group(0)
+        else:
+            answer = ""
     else:
         raise NotImplementedError(task_name)
     return answer
@@ -100,6 +111,7 @@ class ChainOfThoughtDataset(GenerationTaskDataset):
         print_rank_0(self.labeled_prompt)
         self.printed_count = 0
         super().__init__(path, config)
+        print_rank_0(len(self.tokenizer.tokenize(self.labeled_prompt)))
 
     def process_single_item(self, item, **kwargs):
         question, targets = item["question"], item["targets"]
@@ -176,7 +188,7 @@ class ChainOfThoughtTask(GenerationTask):
             return SportsDataset(os.path.join(self.config.path, relative_path), self.config)
         elif self.config.name.startswith("lastletter"):
             return LastLetterDataset(os.path.join(self.config.path, relative_path), self.config)
-        elif self.config.name.startswith("coinflip"):
+        elif self.config.name.startswith("coinflip") or self.config.name.startswith("reverse"):
             return ChainOfThoughtDataset(os.path.join(self.config.path, relative_path), self.config)
         else:
             raise NotImplementedError
