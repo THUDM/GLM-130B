@@ -1,13 +1,12 @@
-name: 'lastletter'
+name: 'coinflip'
 type: 'gen'
 module: "tasks.cot.task.ChainOfThoughtTask"
 path: 'symbolic'
 file-pattern:
-  test: "lastletter.jsonl"
+  test: "coinflip.jsonl"
 sampling_strategy: "BaseStrategy"
-prompt_path: "tasks/cot/lastletter_prompt.txt"
+prompt_path: "tasks/cot/coinflip_prompt.txt"
 deterministic: true
-unidirectional: true
 max_gen_length: 64
 use_task_mask: true
 save_prediction: true

@@ -63,7 +63,7 @@ def extract_answer(prediction, task_name, chain_of_thought=True):
             answer = match.group(0)
         else:
             answer = ""
-    elif task_name.startswith("sports"):
+    elif task_name.startswith("sports") or task_name.startswith("coinflip"):
         prediction = prediction.lower()
         if chain_of_thought:
             pattern = r'(?<=the answer is )(yes|no)'
@@ -176,6 +176,8 @@ class ChainOfThoughtTask(GenerationTask):
             return SportsDataset(os.path.join(self.config.path, relative_path), self.config)
         elif self.config.name.startswith("lastletter"):
             return LastLetterDataset(os.path.join(self.config.path, relative_path), self.config)
+        elif self.config.name.startswith("coinflip"):
+            return ChainOfThoughtDataset(os.path.join(self.config.path, relative_path), self.config)
         else:
             raise NotImplementedError
 
