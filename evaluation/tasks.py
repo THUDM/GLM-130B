@@ -2,7 +2,6 @@ import torch
 import time
 import numpy as np
 import torch.distributed as dist
-from tqdm import tqdm
 
 from typing import Dict, Callable, Type, Tuple, List, Any
 from abc import ABC, abstractmethod
@@ -75,7 +74,7 @@ class BaseTask(ABC):
 
             result_dict_group = {}
             for file in filelist:
-                dataset = self.build_dataset(file, group_name)
+                dataset = self.build_dataset(file)
                 dataloader = build_data_loader(
                     dataset,
                     micro_batch_size=self.config.micro_batch_size,
@@ -85,11 +84,9 @@ class BaseTask(ABC):
                 )
 
                 prediction = []
-                tqdm_wrapper = tqdm if torch.distributed.get_rank() == 0 else lambda x:x
                 with torch.no_grad():
-                    for idx, batch in tqdm_wrapper(enumerate(dataloader)):
-                        p_batch = self.predict_single_batch(batch)
-                        prediction.append(p_batch)
+                    for _, batch in enumerate(dataloader):
+                        prediction.append(self.predict_single_batch(batch))
 
 
                 prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
@@ -161,7 +158,7 @@ class BaseTask(ABC):
         pass
 
     @abstractmethod
-    def build_dataset(self, relative_path: str, split: str) -> EvaluationDataset:
+    def build_dataset(self, relative_path: str) -> EvaluationDataset:
         pass
 
 
@@ -172,7 +169,7 @@ class GenerationTask(BaseTask, ABC):
     def config_class(cls):
         return GenerationTaskConfig
 
-    def build_dataset(self, relative_path, split):
+    def build_dataset(self, relative_path):
         return GenerationTaskDataset(join(self.config.path, relative_path), self.config)
 
     def __init__(self, model: ModelForEvaluation, tokenizer: _IceTokenizer, config: GenerationTaskConfig):
@@ -185,7 +182,7 @@ class GenerationTask(BaseTask, ABC):
             print_rank_0(f"End tokens {end_tokens}")
         if self.config.sampling_strategy == "BaseStrategy":
             self.strategy = BaseStrategy(batch_size=self.config.micro_batch_size, temperature=1.0, top_k=1,
-                                         end_tokens=end_tokens, deterministic=self.config.deterministic)
+                                         end_tokens=end_tokens)
         elif self.config.sampling_strategy == "BeamSearchStrategy":
             self.strategy = BeamSearchStrategy(
                 self.config.micro_batch_size,
@@ -195,7 +192,7 @@ class GenerationTask(BaseTask, ABC):
                 end_tokens=end_tokens,
                 no_repeat_ngram_size=self.config.no_repeat_ngram_size,
                 min_gen_length=self.config.min_gen_length,
-                deterministic=self.config.deterministic,  # For evaluation, we need a determined generation strategy
+                deterministic=True,  # For evaluation, we need a determined generation strategy
             )
         else:
             raise ValueError(f"unknown strategy {self.config.sampling_strategy}")
@@ -212,7 +209,7 @@ class MultiChoiceTask(BaseTask, ABC):
     def config_class(cls):
         return MultiChoiceTaskConfig
 
-    def build_dataset(self, relative_path, split):
+    def build_dataset(self, relative_path):
         return MultiChoiceTaskDataset(join(self.config.path, relative_path), self.config)
 
     def predict_single_batch(self, batch) -> List[int]:

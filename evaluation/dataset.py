@@ -61,15 +61,6 @@ class EvaluationDataset(torch.utils.data.Dataset, ABC):
         return None
 
     def process_single_file(self, path):
-        if not path.endswith("jsonl"):
-            try:
-                with open(os.path.join(path), "r", encoding="utf-8") as file:
-                    dataset = json.load(file)
-                for item in dataset:
-                    self.data.extend(self.process_single_item(item))
-                return
-            except json.decoder.JSONDecodeError:
-                pass
         with open(os.path.join(path), "r", encoding="utf-8") as file:
             for line in file:
                 item = json.loads(line)
@@ -171,8 +162,6 @@ class GenerationTaskDataset(EvaluationDataset):
             use_task_mask=self.config.use_task_mask,
             unidirectional=self.config.unidirectional,
         )
-        if "target" in item:
-            sample["targets"] = [np.array(target, dtype=self.dtype) for target in item["targets"]]
         return sample
 
 
@@ -323,7 +312,6 @@ class MultiChoiceTaskDataset(EvaluationDataset):
             unidirectional=self.config.unidirectional,
             use_task_mask=self.config.use_task_mask,
         )
-        sample["label"] = item["label"]
         return sample
 
 

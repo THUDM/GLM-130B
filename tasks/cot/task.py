@@ -108,10 +108,10 @@ class ChainOfThoughtDataset(GenerationTaskDataset):
         self.labeled_examples = read_examples(config.prompt_path)
         self.labeled_prompt = build_prompt(self.labeled_examples, config.name, chain_of_thought=config.chain_of_thought,
                                            prompt_type=config.prompt_type)
-        print_rank_0(self.labeled_prompt)
+        # print_rank_0(self.labeled_prompt)
         self.printed_count = 0
         super().__init__(path, config)
-        print_rank_0(len(self.tokenizer.tokenize(self.labeled_prompt)))
+        # print_rank_0(len(self.tokenizer.tokenize(self.labeled_prompt)))
 
     def process_single_item(self, item, **kwargs):
         question, targets = item["question"], item["targets"]
@@ -125,9 +125,9 @@ class ChainOfThoughtDataset(GenerationTaskDataset):
         if len(text) + self.config.max_gen_length + 2 > self.config.max_seq_length:
             text_length = self.config.max_seq_length - self.config.max_gen_length - 2
             text = text[len(text) - text_length: len(text)]
-        if self.printed_count < 3:
-            print_rank_0(self.tokenizer.detokenize(text))
-            self.printed_count += 1
+        # if self.printed_count < 3:
+        #     print_rank_0(self.tokenizer.detokenize(text))
+        #     self.printed_count += 1
         return [{"text": text, "targets": targets, **kwargs}]
 
 
@@ -181,7 +181,7 @@ class ChainOfThoughtTask(GenerationTask):
             count += prediction == target
         return count * 100.0 / num_predictions
 
-    def build_dataset(self, relative_path, split):
+    def build_dataset(self, relative_path):
         if self.config.name.startswith("gsm8k"):
             return GSM8KDataset(os.path.join(self.config.path, relative_path), self.config)
         elif self.config.name.startswith("sports"):
