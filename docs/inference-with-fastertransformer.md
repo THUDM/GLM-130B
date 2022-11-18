@@ -8,6 +8,8 @@ We adapted the GLM-130B based on Fastertransformer for fast inference, with deta
 
 See [Get Model](/README.md#environment-setup).
 
+To run in int4 or int8 mode, please run [convert_tp.py](/tools/convert_tp.py) to generate the quantmized ckpt.
+
 ## Recommend: Run With Docker
 
 Use Docker to quickly build a Flask API application for GLM-130B.
