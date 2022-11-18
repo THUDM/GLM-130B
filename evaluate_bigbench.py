@@ -18,6 +18,11 @@ import json
 import torch
 import importlib
 import dataclasses
+import tensorflow as tf
+
+gpus = tf.config.list_physical_devices("GPU")
+local_rank = int(os.environ["LOCAL_RANK"]) % 8
+tf.config.set_visible_devices(gpus[local_rank], "GPU")
 
 from typing import *
 

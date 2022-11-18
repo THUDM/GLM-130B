@@ -27,7 +27,7 @@ class ModelForBigBench(Model):
 
         config = GenerationTaskConfig(
             name="big-bench",
-            type=TaskType.MULTICHOICE,
+            type=TaskType.GENERATION,
             max_gen_length=max_length or 128,
             path="",
             micro_batch_size=micro_batch_size,
