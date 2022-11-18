@@ -1,0 +1,14 @@
+name: 'coinflip'
+type: 'gen'
+module: "tasks.cot.task.ChainOfThoughtTask"
+path: 'symbolic'
+file-pattern:
+  test: "coinflip.jsonl"
+sampling_strategy: "BaseStrategy"
+prompt_path: "tasks/cot/coinflip_prompt.txt"
+deterministic: true
+max_gen_length: 64
+use_task_mask: true
+save_prediction: true
+chain_of_thought: true
+micro_batch_size: 4

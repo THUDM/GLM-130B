@@ -26,6 +26,7 @@ class BaseConfig(YAMLWizard):
     unidirectional: bool = False  # Whether to use unidirectional attention
     max_seq_length: int = 2048  # Max sequence length
     file_pattern: str | Dict[str, str] = "**/*.json*"  # Organize data file in groups
+    save_prediction: bool = False
 
     micro_batch_size: int = 1  # 'gen' task only support mbs = 1 for now
 
@@ -49,6 +50,7 @@ class GenerationTaskConfig(BaseConfig):
     no_repeat_ngram_size: int = 3
     min_gen_length: int = 0
     max_gen_length: int = 128
+    end_tokens: List[str] = field(default_factory=lambda: [])
 
 
 @dataclass

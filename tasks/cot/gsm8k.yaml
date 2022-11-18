@@ -1,0 +1,14 @@
+name: 'gsm8k'
+type: 'gen'
+module: "tasks.cot.task.ChainOfThoughtTask"
+path: 'grade_school_math/data'
+file-pattern:
+  test: "test.jsonl"
+sampling_strategy: "BaseStrategy"
+prompt_path: "tasks/cot/gsm8k_prompt.txt"
+deterministic: true
+max_gen_length: 128
+use_task_mask: true
+save_prediction: true
+chain_of_thought: true
+micro_batch_size: 4

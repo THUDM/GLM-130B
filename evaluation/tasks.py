@@ -41,6 +41,10 @@ class BaseTask(ABC):
 
         self.file_groups = self.get_file_groups()
         self.verbose = dist.get_rank() == 0
+        self.save_prediction = config.save_prediction
+
+    def save_prediction_to_file(self, file, prediction, data):
+        pass
 
     def get_file_groups(self):
         pattern_group = {}
@@ -84,9 +88,12 @@ class BaseTask(ABC):
                     for _, batch in enumerate(dataloader):
                         prediction.append(self.predict_single_batch(batch))
 
+
                 prediction = gather_result(prediction, len(dataset), self.config.micro_batch_size)
                 result_dict = {key: metric(prediction, dataset.data) for key, metric in self.metrics.items()}
                 result_dict_group[file] = (result_dict, len(dataset))
+                if torch.distributed.get_rank() == 0 and self.save_prediction:
+                    self.save_prediction_to_file(file, prediction, dataset.data)
 
                 if self.verbose:
                     self.report_single_metrics(file, result_dict)
@@ -169,6 +176,10 @@ class GenerationTask(BaseTask, ABC):
         super(GenerationTask, self).__init__(model, tokenizer, config)
 
         end_tokens = [tokenizer.get_command("eop"), tokenizer.get_command("eos")]
+        if self.config.end_tokens:
+            for token in self.config.end_tokens:
+                end_tokens.append(self.tokenizer.tokenize(token)[-1])
+            print_rank_0(f"End tokens {end_tokens}")
         if self.config.sampling_strategy == "BaseStrategy":
             self.strategy = BaseStrategy(batch_size=self.config.micro_batch_size, temperature=1.0, top_k=1,
                                          end_tokens=end_tokens)

@@ -1,0 +1,16 @@
+Q: A coin is heads up. Ka flips the coin. Sherrie flips the coin. Is the coin still heads up?
+A: The coin was flipped by Ka and Sherrie. So the coin was flipped 2 times, which is an even number. The coin started heads up, so after an even number of flips, it will still be heads up. So the answer is yes.
+Q: A coin is heads up. Jamey flips the coin. Teressa flips the coin. Is the coin still heads up?
+A: The coin was flipped by Jamey and Teressa. So the coin was flipped 2 times, which is an even number. The coin started heads up, so after an even number of flips, it will still be heads up. So the answer is yes.
+Q: A coin is heads up. Maybelle flips the coin. Shalonda does not flip the coin. Is the coin still heads up?
+A: The coin was flipped by Maybelle. So the coin was flipped 1 time, which is an odd number. The coin started heads up, so after an odd number of flips, it will be tails up. So the answer is no.
+Q: A coin is heads up. Millicent does not flip the coin. Conception flips the coin. Is the coin still heads up?
+A: The coin was flipped by Conception. So the coin was flipped 1 time, which is an odd number. The coin started heads up, so after an odd number of flips, it will be tails up. So the answer is no.
+Q: A coin is heads up. Sal flips the coin. Raymond does not flip the coin. Is the coin still heads up?
+A: The coin was flipped by Sal. So the coin was flipped 1 time, which is an odd number. The coin started heads up, so after an odd number of flips, it will be tails up. So the answer is no.
+Q: A coin is heads up. Conception flips the coin. Kristian does not flip the coin. Is the coin still heads up?
+A: The coin was flipped by Conception. So the coin was flipped 1 time, which is an odd number. The coin started heads up, so after an odd number of flips, it will be tails up. So the answer is no.
+Q: A coin is heads up. Inga does not flip the coin. Elanor does not flip the coin. Is the coin still heads up?
+A: The coin was flipped by no one. So the coin was flipped O times. The coin started heads up, and it was not flipped, so it is still heads up. So the answer is yes.
+Q: A coin is heads up. Ryan flips the coin. Shaunda flips the coin. Is the coin still heads up?
+A: The coin was flipped by Ryan and Shaunda. So the coin was flipped 2 times, which is an even number. The coin started heads up, so after an even number of flips, it will still be heads up. So the answer is yes.
