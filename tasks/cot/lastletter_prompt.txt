@@ -1,0 +1,8 @@
+Q: Take the last letters of the words in "Elon Musk" and concatenate them.
+A: The last letter of "Elon" is "n". The last letter of "Musk" is "k". Concatenating them is "nk". The answer is nk.
+Q: Take the last letters of the words in "Larry Page" and concatenate them.
+A: The last letter of "Larry" is "y". The last letter of "Page" is "e". Concatenating them is "ye". The answer is ye.
+Q: Take the last letters of the words in "Sergey Brin" and concatenate them.
+A: The last letter of "Sergey" is "y". The last letter of "Brin" is "n". Concatenating them is "yn". The answer is yn.
+Q: Take the last letters of the words in "Bill Gates" and concatenate them.
+A: The last letter of "Bill" is "l". The last letter of "Gates" is "s". Concatenating them is "ls". The answer is ls.
