@@ -1,0 +1,11 @@
+name: "web-nlg"
+type: "gen"
+path: "web-nlg/"
+module: "tasks.web-nlg.task.WEB"
+file-pattern:
+  test: "**/test.jsonl"
+
+num_beams: 16
+max_gen_length: 64
+use_task_mask: true
+micro-batch-size: 16
