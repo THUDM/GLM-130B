@@ -8,8 +8,6 @@ We adapted the GLM-130B based on Fastertransformer for fast inference, with deta
 
 See [Get Model](/README.md#environment-setup).
 
-To run in int4 or int8 mode, please run [convert_tp.py](/tools/convert_tp.py) to generate the quantmized ckpt.
-
 ## Recommend: Run With Docker
 
 Use Docker to quickly build a Flask API application for GLM-130B.
@@ -28,14 +26,19 @@ bash docker/build.sh
 
 ### Run API With Checkpoints
 
-Set MPSIZE to the number of gpus needed for the checkpoints, and DATA_TYPE to checkpoints precision.
-
-If checkpoints exist, MPSIZE can be automatically identified.
+Set MPSIZE to the number of gpus needed for the checkpoints, and DATA_TYPE to checkpoints precision. The checkpoint we distribute is in 8-way tensor parallel in FP16 precision, a conversion scripts is also provided if you need to change the tensor parallel dimension and the weight precision.
 
 ```bash
+# Convert the checkpoint to MP=4, DATA_TYPE=INT4
+python tools/convert_tp.py \
+    --input-folder <SRC_CKPT_PATH>  \
+    --output-folder <DST_CKPT_PATH> \
+    --target-tp 8 \
+    --quantization-bit-width 4 \
+# Run API
 docker run -it --rm --gpus all --shm-size=10g -p 5000:5000 \
-           -v <your path to checkpoints>/49300:/checkpoints:ro \
-           -e MPSIZE=8 -e DATA_TYPE=int4 \
+           -v <DST_CKPT_PATH>/49300:/checkpoints:ro \
+           -e MPSIZE=4 -e DATA_TYPE=int4 \
            ftglm:latest
 ```
 
