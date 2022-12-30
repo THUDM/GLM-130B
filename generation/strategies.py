@@ -3,8 +3,9 @@ import torch
 import torch.nn.functional as F
 from SwissArmyTransformer.generation.sampling_strategies.base_strategy import top_k_logits
 
+
 class BaseStrategy:
-    def __init__(self, batch_size, invalid_slices=[], temperature=1., top_k=200, eps=1e-4, top_p=0.0, end_tokens=None):
+    def __init__(self, batch_size, invalid_slices=[], temperature=1.0, top_k=200, eps=1e-4, top_p=0.0, end_tokens=None):
         self.batch_size = batch_size
         self.invalid_slices = invalid_slices
         self.temperature = temperature
@@ -153,7 +154,9 @@ class BeamSearchStrategy:
                     if self.ngram > 0:
                         bans = self.cached_beam_ngram_bans[batch_idx][next_indices[batch_idx, i]].copy()
                         # TODO ngram=1
-                        ngram_prefix = tuple(tokens[batch_idx, next_indices[batch_idx, i], -(self.ngram - 1):].tolist())
+                        ngram_prefix = tuple(
+                            tokens[batch_idx, next_indices[batch_idx, i], -(self.ngram - 1) :].tolist()
+                        )
                         bans[ngram_prefix] = bans.get(ngram_prefix, tuple()) + (next_tokens[batch_idx, i],)
                         bans_continue.append(bans)
                 else:

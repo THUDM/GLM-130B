@@ -62,7 +62,7 @@ class CrowsPairTask(MultiChoiceTask, ABC):
             for value1 in result.items():
                 value1 = value1[1]
                 for key, value in value1.items():
-                    print_rank_0("category:{cat}        score:{score}".format(cat=key, score=round(value * 100,2)))
+                    print_rank_0("category:{cat}        score:{score}".format(cat=key, score=round(value * 100, 2)))
 
 
 class CrowsPairDataset(MultiChoiceTaskDataset):

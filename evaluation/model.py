@@ -7,22 +7,22 @@ from SwissArmyTransformer.mpu import vocab_parallel_cross_entropy
 
 
 def batch_filling_sequence(
-        model,
-        seqs,
-        context_lengths,
-        strategy,
-        max_memory_length=100000,
-        get_masks_and_position_ids=get_masks_and_position_ids_default,
-        mems=None,
-        **kw_args
-        ):
-    '''
-        seq: [2, 3, 5, ..., -1(to be generated), -1, ...]
-        mems: [num_layers, batch_size, len_mems(index), mem_hidden_size]
-            cache, should be first mems.shape[1] parts of context_tokens.
-            mems are the first-level citizens here, but we don't assume what is memorized.
-            input mems are used when multi-phase generation.
-    '''
+    model,
+    seqs,
+    context_lengths,
+    strategy,
+    max_memory_length=100000,
+    get_masks_and_position_ids=get_masks_and_position_ids_default,
+    mems=None,
+    **kw_args
+):
+    """
+    seq: [2, 3, 5, ..., -1(to be generated), -1, ...]
+    mems: [num_layers, batch_size, len_mems(index), mem_hidden_size]
+        cache, should be first mems.shape[1] parts of context_tokens.
+        mems are the first-level citizens here, but we don't assume what is memorized.
+        input mems are used when multi-phase generation.
+    """
     assert len(seqs.shape) == 2
 
     # building the initial tokens, attention_mask, and position_ids
@@ -30,10 +30,10 @@ def batch_filling_sequence(
     seqs, attention_mask, position_ids = get_masks_and_position_ids(seqs)
     tokens = seqs[..., :context_length]
     if attention_mask.dtype != torch.bool:
-        attention_mask = attention_mask.type_as(next(model.parameters())) # if fp16
+        attention_mask = attention_mask.type_as(next(model.parameters()))  # if fp16
     # initialize generation
-    counter = context_length - 1 # Last fixed index is ``counter''
-    index = 0 if mems is None else mems.shape[2] # Next forward starting index, also the length of cache.
+    counter = context_length - 1  # Last fixed index is ``counter''
+    index = 0 if mems is None else mems.shape[2]  # Next forward starting index, also the length of cache.
     num_beams = 1
     # step-by-step generation
     while counter < seqs.shape[1] - 1:
@@ -41,15 +41,19 @@ def batch_filling_sequence(
         # token[:, index: counter+1] needs forwarding.
         # forward
         tokens = tokens.reshape(batch_size * num_beams, -1)
-        mems = mems.reshape(mems.shape[0], batch_size * num_beams, mems.shape[-2], mems.shape[-1]) if mems is not None else None
+        mems = (
+            mems.reshape(mems.shape[0], batch_size * num_beams, mems.shape[-2], mems.shape[-1])
+            if mems is not None
+            else None
+        )
         logits, *output_per_layers = model(
             tokens[:, index:],
-            position_ids[..., index: counter+1],
-            attention_mask[..., index: counter+1, :counter+1], # TODO memlen
+            position_ids[..., index : counter + 1],
+            attention_mask[..., index : counter + 1, : counter + 1],  # TODO memlen
             mems=mems,
             **kw_args
         )
-        mem_kv = [o['mem_kv'] for o in output_per_layers]
+        mem_kv = [o["mem_kv"] for o in output_per_layers]
         mems = update_mems(mem_kv, mems, max_memory_length=max_memory_length)
         if counter == context_length - 1:
             logits = logits[torch.arange(batch_size), context_lengths - 1]
@@ -66,10 +70,15 @@ def batch_filling_sequence(
         tokens, mems = strategy.forward(logits, tokens, mems)
         if len(tokens.shape) == 3 and num_beams == 1:
             num_beams = tokens.shape[1]
-            position_ids = position_ids.unsqueeze(1).expand(batch_size, num_beams, -1).reshape(batch_size * num_beams, -1)
+            position_ids = (
+                position_ids.unsqueeze(1).expand(batch_size, num_beams, -1).reshape(batch_size * num_beams, -1)
+            )
             attention_mask_shape = attention_mask.shape[-3:]
-            attention_mask = attention_mask.unsqueeze(1).expand(batch_size, num_beams, -1, -1, -1).reshape(
-                batch_size * num_beams, *attention_mask_shape)
+            attention_mask = (
+                attention_mask.unsqueeze(1)
+                .expand(batch_size, num_beams, -1, -1, -1)
+                .reshape(batch_size * num_beams, *attention_mask_shape)
+            )
         if strategy.is_done:
             break
     return strategy.finalize(tokens, mems)
@@ -118,8 +127,7 @@ class ModelForEvaluation(torch.nn.Module):
                 log_probs.append(log_probs_single)
         return log_probs
 
-    def generate_text(self, sample, strategy, return_all_beams=False) -> Union[
-        List[List[int]], List[List[List[int]]]]:
+    def generate_text(self, sample, strategy, return_all_beams=False) -> Union[List[List[int]], List[List[List[int]]]]:
         """
         @return: A list of text model generated, sorted by score in descending order
         """
@@ -129,18 +137,17 @@ class ModelForEvaluation(torch.nn.Module):
 
         def get_masks_and_position_ids(seq):
             batch_size = seq.shape[0]
-            max_gen_length = sample['target_position_ids'].shape[-1]
-            tokens = torch.nn.functional.pad(seq, (0, max_gen_length), mode='constant', value=-1)
-            position_ids = torch.cat((sample['position_ids'], sample['target_position_ids']), dim=-1)
+            max_gen_length = sample["target_position_ids"].shape[-1]
+            tokens = torch.nn.functional.pad(seq, (0, max_gen_length), mode="constant", value=-1)
+            position_ids = torch.cat((sample["position_ids"], sample["target_position_ids"]), dim=-1)
             position_ids = position_ids.to(device=self.device).long()
             attention_mask = sample["attention_mask"].to(device=self.device)
-            context_mask = attention_mask[torch.arange(batch_size), context_lengths - 1].unsqueeze(1).repeat(1,
-                                                                                                             max_gen_length,
-                                                                                                             1)
+            context_mask = (
+                attention_mask[torch.arange(batch_size), context_lengths - 1].unsqueeze(1).repeat(1, max_gen_length, 1)
+            )
             causal_mask = torch.tril(context_mask.new_ones((batch_size, max_gen_length, max_gen_length))) < 0.5
-            generation_mask = torch.cat(
-                (context_mask, causal_mask), dim=-1)
-            attention_mask = torch.nn.functional.pad(attention_mask, (0, max_gen_length), mode='constant', value=1)
+            generation_mask = torch.cat((context_mask, causal_mask), dim=-1)
+            attention_mask = torch.nn.functional.pad(attention_mask, (0, max_gen_length), mode="constant", value=1)
             attention_mask = torch.cat((attention_mask, generation_mask), dim=1)
             attention_mask = attention_mask.bool().unsqueeze(1)
             return tokens, attention_mask, position_ids
@@ -176,7 +183,6 @@ class ModelForEvaluation(torch.nn.Module):
             else:
                 output_targets.append(output_target)
         return output_targets
-
 
     def calculate_loss(self, batch) -> List[float]:
         tokens, position_ids, attention_mask = self.process_data(batch, self.device)

@@ -38,9 +38,7 @@ class E2E(GenerationTask):
             target_de = self.tokenizer.detokenize(target["targets"][0])
 
             scores_rouge = scorer_rouge.score(text_de, target_de)
-            scores_bleurt = scorer_bleurt.score(
-                references=[target_de], candidates=[text_de]
-            )
+            scores_bleurt = scorer_bleurt.score(references=[target_de], candidates=[text_de])
             rouge2_precision = scores_rouge["rouge2"].precision
             rouge2_recall = scores_rouge["rouge2"].recall
             rouge2_fmeasure = scores_rouge["rouge2"].fmeasure

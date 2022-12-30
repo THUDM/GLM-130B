@@ -3,10 +3,9 @@ import math
 import string
 import functools
 
-import torch
 import numpy as np
 
-from typing import Tuple, List
+from typing import List
 from collections import Counter
 from collections import defaultdict
 from SwissArmyTransformer import get_tokenizer

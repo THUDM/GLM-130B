@@ -228,7 +228,12 @@ class MultiChoiceTaskDataset(EvaluationDataset):
 
     @staticmethod
     def build_multiple_choice_sample(
-        text, choices, is_single_token, unified_multitask_encoding=False, unidirectional=False, use_task_mask=False
+        text,
+        choices,
+        is_single_token,
+        unified_multitask_encoding=False,
+        unidirectional=False,
+        use_task_mask=False,
     ):
         tokenizer = get_tokenizer()
 
