@@ -113,7 +113,7 @@ def fill_blanks(raw_text: str, model, tokenizer, strategy) -> Tuple[List[str], L
             get_masks_and_position_ids=partial(
                 get_masks_and_position_ids,
                 mask_position=mask_position,
-                max_gen_length=args.out_seq_length - input_seq.shape[-1],
+                max_gen_length=args.out_seq_length,
                 gmask=use_gmask,
             ),
         )
