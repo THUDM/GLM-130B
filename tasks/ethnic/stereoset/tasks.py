@@ -20,7 +20,7 @@ class StereoSetTask(MultiChoiceTask, ABC):
     config: MultiChoiceTaskConfig
 
     def build_dataset(self, relative_path):
-        return StereoSetDataset(join(self.config.path, relative_path), self.config)
+        return StereoSetDataset(join(self.config.path, relative_path), self.model, self.config)
 
     def predict_single_batch(self, batch) -> List[int]:
         log_probs = self.model.cond_log_prob(batch)
@@ -84,10 +84,10 @@ class StereoSetTask(MultiChoiceTask, ABC):
 class StereoSetDataset(MultiChoiceTaskDataset):
     config: MultiChoiceTaskConfig
 
-    def __init__(self, path, config: MultiChoiceTaskConfig):
+    def __init__(self, path, model, config: MultiChoiceTaskConfig):
         self.is_single_token = True  # set to False later in process_single_item func
         self.eval_data = []
-        super().__init__(path, config)
+        super().__init__(path, model, config)
 
     def process_single_item(self, item):
         text, choices, label = (

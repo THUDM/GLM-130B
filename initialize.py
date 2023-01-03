@@ -100,7 +100,13 @@ def initialize_model_and_tokenizer(args):
     with torch.no_grad():
         _, *_ = model(
             torch.ones(1, args.max_sequence_length, device=torch.cuda.current_device(), dtype=torch.int64),
-            torch.arange(args.max_sequence_length, device=torch.cuda.current_device(), dtype=torch.int64).view(1, -1),
+            torch.arange(args.max_sequence_length, device=torch.cuda.current_device(), dtype=torch.int64)
+            .view(1, 1, -1)
+            .repeat(1, 2, 1)
+            if args.position_encoding_2d
+            else torch.arange(args.max_sequence_length, device=torch.cuda.current_device(), dtype=torch.int64).view(
+                1, -1
+            ),
             torch.randn(
                 1,
                 1,

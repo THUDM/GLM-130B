@@ -15,17 +15,21 @@ from SwissArmyTransformer import get_tokenizer
 
 from .configs import BaseConfig, MultiChoiceTaskConfig, GenerationTaskConfig, LanguageModelTaskConfig
 from .utils import get_tokenized_input
+from .model import ModelForEvaluation
 
 
 def pad_batch(tokens, position_ids, attention_mask, max_seq_length):
+    pad_length = max_seq_length - len(tokens)
     attention_mask = np.pad(
         attention_mask,
-        pad_width=((0, max_seq_length - len(tokens)),),
+        pad_width=((0, pad_length),),
         mode="constant",
         constant_values=0,
     )
-    tokens = np.concatenate((tokens, np.zeros(max_seq_length - len(tokens), dtype=np.int64)))
-    position_ids = np.concatenate((position_ids, np.zeros(max_seq_length - len(position_ids), dtype=np.int64)))
+    tokens = np.concatenate((tokens, np.zeros(pad_length, dtype=np.int64)))
+    position_ids = np.concatenate(
+        (position_ids, np.zeros_like(position_ids[..., -1:], dtype=np.int64).repeat(pad_length, -1)), axis=-1
+    )
     return tokens, position_ids, attention_mask
 
 
@@ -39,8 +43,9 @@ class EvaluationDataset(torch.utils.data.Dataset, ABC):
     If [MASK] not in context, will append [MASK] after text
     """
 
-    def __init__(self, path: Union[str, List[str]], config: BaseConfig):
+    def __init__(self, path: Union[str, List[str]], model: ModelForEvaluation, config: BaseConfig):
         self.path = path if isinstance(path, list) else [path]
+        self.model = model
         self.config = config
         self.max_seq_length = self.config.max_seq_length
         self.dtype = np.int64
@@ -170,9 +175,9 @@ class GenerationTaskDataset(EvaluationDataset):
 class MultiChoiceTaskDataset(EvaluationDataset):
     config: MultiChoiceTaskConfig
 
-    def __init__(self, path, config: MultiChoiceTaskConfig):
+    def __init__(self, path: Union[str, List[str]], model: ModelForEvaluation, config: BaseConfig):
         self.is_single_token = True  # set to False later in process_single_item func
-        super().__init__(path, config)
+        super().__init__(path, model, config)
 
     @property
     def has_collate_fn(self) -> bool:
@@ -226,88 +231,9 @@ class MultiChoiceTaskDataset(EvaluationDataset):
 
         return [{"text": text, "choices": choices, "label": label, **kwargs}]
 
-    @staticmethod
-    def build_multiple_choice_sample(
-        text,
-        choices,
-        is_single_token,
-        unified_multitask_encoding=False,
-        unidirectional=False,
-        use_task_mask=False,
-    ):
-        tokenizer = get_tokenizer()
-
-        sop_id = tokenizer.get_command("sop")
-        mask_id = tokenizer.get_command("[gMASK]") if use_task_mask else tokenizer.get_command("[MASK]")
-
-        token = np.array(text, dtype=np.int64)
-        target = np.array(text, dtype=np.int64)
-        position_id = np.arange(len(text), dtype=np.int64)
-        choice_target_id = []
-
-        blank_filling = mask_id in text
-        if not blank_filling:
-            if unidirectional:
-                assert use_task_mask
-                token = np.concatenate(([mask_id, sop_id], token[:-1]))
-                target = np.concatenate(([mask_id, sop_id], target[:-1]))
-                position_id = np.arange(len(token), dtype=np.int64)
-                mask_position = len(token)
-            else:
-                mask_position = len(token)
-                token = np.concatenate((token, [mask_id]))
-                target = np.concatenate((target, [mask_id]))
-                position_id = np.concatenate((position_id, [mask_position]))
-        else:
-            assert not unidirectional, "Unidirectional attention doesn't support blank filling"
-            assert not use_task_mask, "Unidirectional attention doesn't support task mask"
-            mask_position = text.index(mask_id)
-
-        division = len(token)
-        attention_mask = [np.ones((len(token), len(token)), dtype=np.int64)]
-        if unidirectional:
-            attention_mask[0] = np.tril(attention_mask[0])
-
-        for choice in choices:
-            if not choice:
-                choice = [tokenizer.get_command("eop")]
-            position_id = np.concatenate(
-                (
-                    position_id,
-                    [mask_position] * len(choice)
-                    if (blank_filling or not unified_multitask_encoding) and not use_task_mask
-                    else np.arange(mask_position, mask_position + len(choice), dtype=np.int64),
-                )
-            )
-            choice_target_id.append(np.arange(len(token), len(token) + len(choice), dtype=np.int64))
-            attention_mask.append(np.tril(np.ones((len(choice), len(choice)), dtype=np.int64)))
-            if unidirectional:
-                token = np.concatenate((token, [text[-1]], choice[:-1]))
-            else:
-                token = np.concatenate((token, [sop_id], choice[:-1]))
-            target = np.concatenate((target, choice))
-
-            if is_single_token:
-                break
-
-        attention_mask = block_diag(*attention_mask)
-        attention_mask[division:, :division] = 1
-
-        if is_single_token:
-            choices = np.array(choices, dtype=np.int64).squeeze().tolist()
-
-        item = {
-            "token": token,
-            "position_id": position_id,
-            "attention_mask": attention_mask,
-            "choices": choices,
-            "choice_target_ids": choice_target_id[0] if is_single_token else choice_target_id,
-        }
-        return item
-
     def __getitem__(self, idx):
         item = self.data[idx]
-        sample = self.build_multiple_choice_sample(
+        sample = self.model.build_multiple_choice_sample(
             item["text"],
             item["choices"],
             is_single_token=self.is_single_token,
@@ -358,27 +284,11 @@ class LanguageModelTaskDataset(EvaluationDataset):
         end_idx = start_idx + self.config.max_seq_length - 1  # for additional [gMASK]
         tokens = self.data[document_idx]["raw_text"][start_idx:end_idx]
 
-        mask_id = self.gmask_id if self.config.use_task_mask else self.mask_id
-        sop_id = self.tokenizer.get_command("sop")
-
-        if idx == 0 or self.config.unidirectional:
-            prompt, text = [], tokens
-        else:
-            prompt_length = self.config.max_seq_length - 1 - self.config.generation_length
-            prompt, text = tokens[:prompt_length], tokens[prompt_length:]
-
-        seq_length = len(prompt) + len(text) + 1
-        attention_mask = np.tril(np.ones((seq_length, seq_length), dtype=np.int64))
-        attention_mask[: len(prompt) + 1, : len(prompt) + 1] = 1
-
-        gen_length = min(len(text), self.config.generation_length)
-        return {
-            "tokens": np.array(prompt + [mask_id, sop_id] + text[:-1], dtype=np.int64),
-            "targets": np.array(prompt + [mask_id] + text, dtype=np.int64),
-            "position_ids": np.arange(0, seq_length, dtype=np.int64),
-            "attention_mask": attention_mask < 0.5,
-            "loss_masks": np.array(
-                [0] * (seq_length - gen_length) + [1] * gen_length,
-                dtype=np.int64,
-            ),
-        }
+        return self.model.build_language_model_sample(
+            tokens,
+            is_first_segment=idx == 0,
+            max_seq_length=self.config.max_seq_length,
+            generation_length=self.config.generation_length,
+            unidirectional=self.config.unidirectional,
+            use_gmask=self.config.use_task_mask,
+        )

@@ -3,6 +3,7 @@ import json
 import re
 from typing import Union, List, Dict, Callable
 from datetime import datetime
+from evaluation.model import ModelForEvaluation
 from evaluation.tasks import GenerationTask, GenerationTaskDataset, GenerationTaskConfig
 from evaluation.utils import print_rank_0
 from dataclasses import dataclass
@@ -116,14 +117,14 @@ def extract_answer(prediction, task_name, chain_of_thought=True):
 class ChainOfThoughtDataset(GenerationTaskDataset):
     config: ChainOfThoughtConfig
 
-    def __init__(self, path: Union[str, List[str]], config: ChainOfThoughtConfig):
+    def __init__(self, path: Union[str, List[str]], model: ModelForEvaluation, config: ChainOfThoughtConfig):
         self.labeled_examples = read_examples(config.prompt_path)
         self.labeled_prompt = build_prompt(
             self.labeled_examples, config.name, chain_of_thought=config.chain_of_thought, prompt_type=config.prompt_type
         )
         # print_rank_0(self.labeled_prompt)
         self.printed_count = 0
-        super().__init__(path, config)
+        super().__init__(path, model, config)
         # print_rank_0(len(self.tokenizer.tokenize(self.labeled_prompt)))
 
     def process_single_item(self, item, **kwargs):
@@ -209,15 +210,15 @@ class ChainOfThoughtTask(GenerationTask):
 
     def build_dataset(self, relative_path):
         if self.config.name.startswith("gsm8k"):
-            return GSM8KDataset(os.path.join(self.config.path, relative_path), self.config)
+            return GSM8KDataset(os.path.join(self.config.path, relative_path), self.model, self.config)
         elif self.config.name.startswith("sports"):
-            return SportsDataset(os.path.join(self.config.path, relative_path), self.config)
+            return SportsDataset(os.path.join(self.config.path, relative_path), self.model, self.config)
         elif self.config.name.startswith("lastletter"):
-            return LastLetterDataset(os.path.join(self.config.path, relative_path), self.config)
+            return LastLetterDataset(os.path.join(self.config.path, relative_path), self.model, self.config)
         elif self.config.name.startswith("coinflip") or self.config.name.startswith("reverse"):
-            return ChainOfThoughtDataset(os.path.join(self.config.path, relative_path), self.config)
+            return ChainOfThoughtDataset(os.path.join(self.config.path, relative_path), self.model, self.config)
         elif self.config.name.startswith("date"):
-            return DateDataset(os.path.join(self.config.path, relative_path), self.config)
+            return DateDataset(os.path.join(self.config.path, relative_path), self.model, self.config)
         else:
             raise NotImplementedError
 

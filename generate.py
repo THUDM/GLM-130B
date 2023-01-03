@@ -30,7 +30,7 @@ def isEnglish(s):
         return True
 
 
-def get_masks_and_position_ids(seq, mask_position, max_gen_length, gmask=False):
+def get_masks_and_position_ids(seq, mask_position, max_gen_length, gmask=False, position_encoding_2d=False):
     context_length = seq.shape[1]
     tokens = torch.nn.functional.pad(seq, (0, max_gen_length), mode="constant", value=-1)
     attention_mask = torch.ones((1, tokens.shape[-1], tokens.shape[-1]), device=tokens.device)
@@ -39,9 +39,20 @@ def get_masks_and_position_ids(seq, mask_position, max_gen_length, gmask=False):
     attention_mask.unsqueeze_(1)
     attention_mask = (attention_mask < 0.5).bool()
 
-    position_ids = torch.arange(tokens.shape[-1], dtype=torch.long, device=tokens.device)
-    if not gmask:
+    if position_encoding_2d:
+        position_ids = torch.arange(tokens.shape[-1], dtype=torch.long, device=tokens.device)
         position_ids[context_length - 1 :] = mask_position
+        block_position_ids = torch.cat(
+            (
+                torch.zeros(context_length - 2, dtype=torch.long, device=tokens.device),
+                torch.arange(tokens.shape[-1] - (context_length - 2), dtype=torch.long, device=tokens.device),
+            )
+        )
+        position_ids = torch.vstack((position_ids, block_position_ids))
+    else:
+        position_ids = torch.arange(tokens.shape[-1], dtype=torch.long, device=tokens.device)
+        if not gmask:
+            position_ids[context_length - 1 :] = mask_position
 
     position_ids = position_ids.unsqueeze(0)
 
@@ -115,6 +126,7 @@ def fill_blanks(raw_text: str, model, tokenizer, strategy) -> Tuple[List[str], L
                 mask_position=mask_position,
                 max_gen_length=args.out_seq_length,
                 gmask=use_gmask,
+                position_encoding_2d=args.position_encoding_2d,
             ),
         )
         if isinstance(output, torch.Tensor):  # different strategies

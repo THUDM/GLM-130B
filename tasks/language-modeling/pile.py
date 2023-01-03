@@ -33,7 +33,7 @@ class Pile(LanguageModelTask):
         return {"BPB": calculate_bpb_score}
 
     def build_dataset(self, relative_path):
-        return PileDataset(join(self.config.path, relative_path), self.config)
+        return PileDataset(join(self.config.path, relative_path), self.model, self.config)
 
     def report_single_metrics(self, file: str, result_dict: Dict[str, float]):
         pass

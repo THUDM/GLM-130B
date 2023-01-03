@@ -56,7 +56,7 @@ def main():
     print_rank_0(f"> Successfully load {len(task_classes)} task{'s' if len(task_classes) > 1 else ''}")
 
     model, tokenizer = initialize_model_and_tokenizer(args)
-    model = ModelForEvaluation(model)
+    model = ModelForEvaluation(model, args.position_encoding_2d)
 
     start = time.time()
     evaluate_all_tasks(args.data_path, model, tokenizer, args.task, task_classes)

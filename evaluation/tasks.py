@@ -170,7 +170,7 @@ class GenerationTask(BaseTask, ABC):
         return GenerationTaskConfig
 
     def build_dataset(self, relative_path):
-        return GenerationTaskDataset(join(self.config.path, relative_path), self.config)
+        return GenerationTaskDataset(join(self.config.path, relative_path), self.model, self.config)
 
     def save_prediction_to_file(self, file, prediction, data):
         filename = os.path.join("outputs", self.config.name, f"{file}.predict")
@@ -218,7 +218,7 @@ class MultiChoiceTask(BaseTask, ABC):
         return MultiChoiceTaskConfig
 
     def build_dataset(self, relative_path):
-        return MultiChoiceTaskDataset(join(self.config.path, relative_path), self.config)
+        return MultiChoiceTaskDataset(join(self.config.path, relative_path), self.model, self.config)
 
     def predict_single_batch(self, batch) -> List[int]:
         log_probs = self.model.cond_log_prob(batch)
@@ -233,7 +233,7 @@ class LanguageModelTask(BaseTask, ABC):
         return LanguageModelTaskConfig
 
     def build_dataset(self, relative_path):
-        return LanguageModelTaskDataset(join(self.config.path, relative_path), self.config)
+        return LanguageModelTaskDataset(join(self.config.path, relative_path), self.model, self.config)
 
     def predict_single_batch(self, batch) -> List[float]:
         return self.model.calculate_loss(batch)
