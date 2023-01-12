@@ -36,7 +36,7 @@ def main(args):
         if args.with_id:
             query_id, raw_text = raw_text.split("\t")
 
-        answers, answers_with_style, blanks = fill_blanks(raw_text, model, tokenizer, strategy)
+        answers, answers_with_style, blanks = fill_blanks(raw_text, model, tokenizer, strategy, args)
 
         if torch.distributed.get_rank() == 0:
             print(answers)
@@ -138,8 +138,6 @@ def main(args):
                 """
                 An Open Bilingual Pre-Trained Model. [Visit our github repo](https://github.com/THUDM/GLM-130B)
                 GLM-130B uses two different mask tokens: `[MASK]` for short blank filling and `[gMASK]` for left-to-right long text generation. When the input does not contain any MASK token, `[gMASK]` will be automatically appended to the end of the text. We recommend that you use `[MASK]` to try text fill-in-the-blank to reduce wait time (ideally within seconds without queuing).
-                
-                Note: We suspect that there is a bug in the current FasterTransformer INT4 implementation that leads to gaps in generations compared to the FP16 model (e.g. more repititions), which we are troubleshooting, and the current model output is **for reference only**
                 """
             )
 
@@ -191,7 +189,7 @@ def main(args):
                         BaseStrategy
                         """
                     )
-                    temperature = gr.Slider(maximum=1, value=0.7, minimum=0, label="Temperature")
+                    temperature = gr.Slider(maximum=1, value=1.0, minimum=0, label="Temperature")
                     topk = gr.Slider(maximum=40, value=0, minimum=0, step=1, label="Top K")
                     topp = gr.Slider(maximum=1, value=0.7, minimum=0, label="Top P")
 
@@ -212,14 +210,6 @@ def main(args):
             clr.click(fn=lambda value: gr.update(value=""), inputs=clr, outputs=model_input)
 
             gr_examples = gr.Examples(examples=examples, inputs=model_input)
-
-            gr.Markdown(
-                """
-                Disclaimer inspired from [BLOOM](https://huggingface.co/spaces/bigscience/bloom-book)
-                
-                GLM-130B was trained on web-crawled data, so it's hard to predict how GLM-130B will respond to particular prompts; harmful or otherwise offensive content may occur without warning. We prohibit users from knowingly generating or allowing others to knowingly generate harmful content, including Hateful, Harassment, Violence, Adult, Political, Deception, etc. 
-                """
-            )
 
         demo.launch(share=True)
     else:
