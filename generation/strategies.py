@@ -14,7 +14,7 @@ class BaseStrategy:
         if end_tokens is None:
             end_tokens = []
         self.end_tokens = end_tokens
-        self._is_done = np.zeros(self.batch_size, dtype=np.bool)
+        self._is_done = np.zeros(self.batch_size, dtype=np.bool_)
 
     @property
     def is_done(self) -> bool:
@@ -43,7 +43,7 @@ class BaseStrategy:
         return tokens, mems
 
     def finalize(self, tokens, mems):
-        self._is_done = np.zeros(self.batch_size, dtype=np.bool)
+        self._is_done = np.zeros(self.batch_size, dtype=np.bool_)
         return tokens, mems
 
 
@@ -77,7 +77,7 @@ class BeamSearchStrategy:
         self.cached_beam_scores = 0  # [batch_size]
         self.cached_beam_ngram_bans = [[{} for _ in range(self.num_beams)] for _ in range(self.batch_size)]
         self.length_generated = 0
-        self._is_done = np.zeros(self.batch_size, dtype=np.bool)
+        self._is_done = np.zeros(self.batch_size, dtype=np.bool_)
 
     def _add_end_beams(self, score, beam, batch_idx):
         score = score / ((5.0 + len(beam)) / 6) ** self.length_penalty  # Magic number for OpenNMT
