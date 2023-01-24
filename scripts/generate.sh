@@ -14,14 +14,14 @@ NUM_BEAMS=4
 LENGTH_PENALTY=1.0
 NO_REPEAT_NGRAM=3
 # BaseStrategy args
-TEMP=0.9
-TOPK=1
-TOPP=0
+TEMP=1.0
+TOPK=0
+TOPP=0.7
 
 ARGS="${main_dir}/generate.py \
        --seed $SEED \
        --mode inference \
-       --sampling-strategy BeamSearchStrategy \
+       --sampling-strategy BaseStrategy \
        --out-seq-length $MAX_OUTPUT_LENGTH \
        --min-gen-length $MIN_GEN_LENGTH \
        --num-beams $NUM_BEAMS \
