@@ -119,51 +119,9 @@ class GenerationTaskDataset(EvaluationDataset):
             "target_position_ids": torch.tensor(np.array(target_position_id_batch), dtype=torch.int64),
         }
 
-    @staticmethod
-    def build_generation_sample(text, max_gen_length, use_task_mask, unidirectional=True):
-        tokenizer = get_tokenizer()
-
-        sop_id = tokenizer.get_command("sop")
-        mask_id = tokenizer.get_command("[gMASK]") if use_task_mask else tokenizer.get_command("[MASK]")
-
-        token = np.array(text, dtype=np.int64)
-
-        blank_filling = mask_id in text
-        if blank_filling:
-            assert not unidirectional, "Unidirectional attention doesn't support blank filling"
-            assert not use_task_mask, "Unidirectional attention doesn't support task mask"
-            mask_position = text.index(mask_id)
-            token = np.concatenate((token, [sop_id]))
-        else:
-            mask_position = len(token)
-            if unidirectional:
-                token = np.concatenate(([mask_id, sop_id], token))
-            else:
-                token = np.concatenate((token, [mask_id, sop_id]))
-        context_length = len(token)
-
-        position_id = np.arange(0, context_length, dtype=np.int64)
-        target_position_id = np.arange(context_length, context_length + max_gen_length, dtype=np.int64)
-        if not use_task_mask:
-            position_id[context_length - 1 :] = mask_position
-            target_position_id[:] = mask_position
-
-        attention_mask = np.tril(np.ones((context_length, context_length), dtype=np.int64))
-        if not unidirectional:
-            attention_mask[: context_length - 1, : context_length - 1] = 1
-
-        item = {
-            "token": token,
-            "position_id": position_id,
-            "target_position_id": target_position_id,
-            "attention_mask": attention_mask,
-            "context_length": context_length,
-        }
-        return item
-
     def __getitem__(self, idx):
         item = self.data[idx]
-        sample = self.build_generation_sample(
+        sample = self.model.build_generation_sample(
             item["text"],
             max_gen_length=self.config.max_gen_length,
             use_task_mask=self.config.use_task_mask,
