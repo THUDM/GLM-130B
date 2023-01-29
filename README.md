@@ -1,7 +1,7 @@
 <img src="resources/7D6433A42D189E2E6FBC62BE066BCE91.png">
 
 <p align="center">
-   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/THUDM/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 📃 <a href="https://arxiv.org/abs/2210.02414" target="_blank">Paper</a><br>
+   🌐 <a href="http://keg.cs.tsinghua.edu.cn/glm-130b/posts/glm-130b/" target="_blank">Blog</a> • ⏬ <a href="https://docs.google.com/forms/d/e/1FAIpQLSehr5Dh_i3TwACmFFi8QEgIVNYGmSPwV0GueIcsUev0NEfUug/viewform" target="_blank">Download Model</a> • 🪧 <a href="https://huggingface.co/spaces/THUDM/GLM-130B" target="_blank">Demo</a> • ✉️ <a href="mailto:glm-130b@googlegroups.com">Email</a> • 📃 <a href="https://arxiv.org/abs/2210.02414" target="_blank">Paper [ICLR 2023]</a><br>
 </p>
 
 <p align="center">
@@ -23,6 +23,7 @@ This repository mainly focus on the evaluation of GLM-130B, the training part ca
 
 ## News
 
+- **[2023.01.21]** GLM-130B has been accepted to [ICLR 2023](https://iclr.cc/Conferences/2023)!
 - **[2022.10.06]** Our [paper](http://arxiv.org/abs/2210.02414) for GLM-130B is out!
 - **[2022.08.24]** We are proud to publish the quantized version for GLM-130B.  While preserving the activation precision as FP16, the model weights can be quantized to as low as **INT4 with almost no degradation of performance**, further reducing the hardware requirements of the GLM-130B to **a single server with 4 * RTX 3090 (24G)**! See [Quantization of GLM-130B](docs/quantization.md) for details.
 
