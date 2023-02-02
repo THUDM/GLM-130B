@@ -136,7 +136,7 @@ We use the YAML file to define tasks. Specifically, you can add multiple tasks o
 bash scripts/evaluate.sh task1.yaml task2.yaml dir1 dir2 ...
 ```
 
-Download our evaluation dataset [here](https://cloud.tsinghua.edu.cn/f/9257ee84045644b8ac06/), and set `DATA_PATH` in `scripts/evaluate.sh` to your local dataset directory. The task folder contains the YAML files for 30+ tasks we evaluated for GLM-130B. Take the [CoLA](https://nyu-mll.github.io/CoLA/) task for example, run `bash scripts/evaluate.sh tasks/bloom/glue_cola.yaml`, which outputs an accuracy of ~65% for the best prompt and ~57% for the median.
+Download our evaluation dataset [here](https://cloud.tsinghua.edu.cn/f/826f0df4356f4022a264/), and set `DATA_PATH` in `scripts/evaluate.sh` to your local dataset directory. The task folder contains the YAML files for 30+ tasks we evaluated for GLM-130B. Take the [CoLA](https://nyu-mll.github.io/CoLA/) task for example, run `bash scripts/evaluate.sh tasks/bloom/glue_cola.yaml`, which outputs an accuracy of ~65% for the best prompt and ~57% for the median.
 
 <details>
 <summary>Expected Output</summary>
