@@ -1,0 +1,8 @@
+name: 'Big-bench Hard Multichoice'
+type: 'mul'
+path: 'bbh_cot/direct/multichoice'
+module: 'tasks.bbh.task.BBHMultichoice'
+file-pattern:
+  test: "**/*.json*"
+micro-batch-size: 8
+use_task_mask: True

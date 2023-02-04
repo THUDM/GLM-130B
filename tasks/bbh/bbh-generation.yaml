@@ -1,0 +1,10 @@
+name: 'Big-bench Hard Generation'
+type: 'gen'
+path: 'bbh_cot/direct/generation'
+module: 'tasks.bbh.task.BBHGeneration'
+file-pattern:
+  test: "**/*.json*"
+micro-batch-size: 8
+max_gen_length: 400
+save-prediction: True
+use_task_mask: True
