@@ -6,7 +6,7 @@ class BeamSearchStrategyForLAMBADA(BeamSearchStrategy):
         super().__init__(*args, **kwargs)
         self.banned_prefix = banned_prefix
 
-    def forward(self, logits, tokens, mems):
+    def forward(self, logits, tokens, mems, *args):
         batch_size, num_beams, vocab_size = logits.shape
         logits = logits.float()
         for prefix in self.banned_prefix:

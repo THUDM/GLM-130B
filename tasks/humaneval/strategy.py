@@ -2,10 +2,13 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from SwissArmyTransformer.generation.sampling_strategies.base_strategy import top_k_logits
+from SwissArmyTransformer import get_tokenizer
+from .utils import code_generation_end
 
-
-class BaseStrategy:
-    def __init__(self, batch_size, invalid_slices=[], temperature=1.0, top_k=200, eps=1e-4, top_p=0.0, end_tokens=None):
+class CodeBaseStrategy:
+    def __init__(self, language, batch_size, invalid_slices=[], temperature=1.0, top_k=200, eps=1e-4, top_p=0.0, end_tokens=None):
+        self.language = language
+        self.tokenizer = get_tokenizer()
         self.batch_size = batch_size
         self.invalid_slices = invalid_slices
         self.temperature = temperature
@@ -21,7 +24,7 @@ class BaseStrategy:
     def is_done(self) -> bool:
         return self._is_done.all()
 
-    def forward(self, logits, tokens, mems, temperature=None, *args):
+    def forward(self, logits, tokens, mems, context_length, temperature=None):
         logits = logits.view(-1, logits.size(-1))
         batch_size = tokens.shape[0]
         if temperature is None:
@@ -41,16 +44,21 @@ class BaseStrategy:
             elif pred[i].item() in self.end_tokens:
                 self._is_done[i] = True
         tokens = torch.cat((tokens, pred.view(tokens.shape[:-1] + (1,))), dim=-1)
+        for i in range(self.batch_size):
+            if not self._is_done[i]:
+                generation = self.tokenizer.tokenizer.decode(tokens[i].flatten()[context_length:])
+                if code_generation_end(generation, self.language):
+                    self._is_done[i] = True
         return tokens, mems
 
     def finalize(self, tokens, mems):
         self._is_done = np.zeros(self.batch_size, dtype=np.bool)
         return tokens, mems
 
-
-class BeamSearchStrategy:
+class CodeBeamSearchStrategy:
     def __init__(
         self,
+        language,
         batch_size,
         num_beams,
         length_penalty=1.0,
@@ -61,6 +69,7 @@ class BeamSearchStrategy:
         min_gen_length=0,
         deterministic=False,
     ):
+        self.language = language
         self.batch_size = batch_size
         self.num_beams = num_beams
         self.length_penalty = length_penalty

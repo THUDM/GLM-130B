@@ -1,0 +1,11 @@
+name: 'Human-Eval'
+type: 'gen'
+module: "tasks.humaneval.task.HumanEvalTask"
+path: 'humaneval'
+file-pattern: "*.json*"
+num_samples: 200
+max_gen_length: 512
+micro_batch_size: 8
+use_task_mask: true
+unidirectional: true
+save-prediction: true
