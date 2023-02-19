@@ -273,7 +273,7 @@ class ModelForEvaluation(torch.nn.Module):
                 target_block_position_id = np.arange(len(token), len(token) + max_gen_length, dtype=np.int64)
             else:
                 position_id = np.arange(len(token), dtype=np.int64)
-                target_position_id = np.zeros(len(token), len(token) + max_gen_length, dtype=np.int64)
+                target_position_id = np.arange(len(token), len(token) + max_gen_length, dtype=np.int64)
         else:
             if not blank_filling:
                 mask_position = len(token)
