@@ -170,37 +170,6 @@ By adapting the GLM-130B model to [FasterTransfomer](https://github.com/NVIDIA/F
 
 
 
-
-<details>
-<summary><b>Acknowledgement</b></summary>
-
-<br/>
-This project is supported by the National Science Foundation for Distinguished Young Scholars (No. 61825602). 
-
-### Lead Contributors
-[Aohan Zeng (Tsinghua KEG)](https://github.com/Sengxian), [Xiao Liu (Tsinghua KEG)](https://github.com/xiao9905)
-
-### Contributors
-#### Tsinghua KEG---the Knowledge Engineering Group at Tsinghua
-Zhengxiao Du, Ming Ding, Qinkai Zheng, Hanyu Lai, Zihan Wang, Zhuoyi Yang, Jifan Yu, Xiaohan Zhang, Wendi Zheng, Xiao Xia, Yifan Xu, Weng Lam Tam, Yuxiao Dong, Jie Tang
-
-#### Tsinghua PACMAN---the Parallel Architecture & Compiler technology of Mobile, Accelerated, and Networked systems Group at Tsinghua
-Zixuan Ma, Jiaao He, Zhenbo Sun, Jidong Zhai, Wenguang Chen
-
-#### Tsinghua NLP (BMInf)---the Natural Language Processing Group at Tsinghua
-Guoyang Zeng, Xu Han, Weilin Zhao, Zhiyuan Liu
-   
-#### Zhipu.AI---an AI startup that aims to teach machines to think like humans
-Yufei Xue, Shan Wang, Jiecai Shan, Haohan Jiang, Zhengang Guo, Peng Zhang
-
-### Computation Sponsor
-Zhipu.AI
-
-### Project Leader
-[Jie Tang (Tsinghua KEG & BAAI)](http://keg.cs.tsinghua.edu.cn/jietang/)
-
-</details>
-
 ## License
 
 This repository is licensed under the [Apache-2.0 license](LICENSE). The use of GLM-130B model weights is subject to the [Model License](MODEL_LICENSE).
