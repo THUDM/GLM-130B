@@ -1,3 +1,4 @@
+cmake
 SwissArmyTransformer>=0.2.12
 icetk
 apex
