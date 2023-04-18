@@ -1,4 +1,4 @@
-SwissArmyTransformer>=0.2.12
+SwissArmyTransformer>=0.2.12,<0.3
 icetk
 apex
 scipy
