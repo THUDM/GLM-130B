@@ -193,11 +193,10 @@ If you find our work useful, please consider citing GLM-130B:
 You may also consider GLM's original work in your reference:
 
 ```
-@inproceedings{du2022glm,
-  title={GLM: General Language Model Pretraining with Autoregressive Blank Infilling},
-  author={Du, Zhengxiao and Qian, Yujie and Liu, Xiao and Ding, Ming and Qiu, Jiezhong and Yang, Zhilin and Tang, Jie},
-  booktitle={Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
-  pages={320--335},
+@article{zeng2022glm,
+  title={Glm-130b: An open bilingual pre-trained model},
+  author={Zeng, Aohan and Liu, Xiao and Du, Zhengxiao and Wang, Zihan and Lai, Hanyu and Ding, Ming and Yang, Zhuoyi and Xu, Yifan and Zheng, Wendi and Xia, Xiao and others},
+  journal={arXiv preprint arXiv:2210.02414},
   year={2022}
 }
 ```
