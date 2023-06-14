@@ -23,6 +23,7 @@ This repository mainly focus on the evaluation of GLM-130B. If you find our work
 
 ## News
 
+- **[2023.06.14]** We release the research [WebGLM](https://github.com/THUDM/WebGLM), which enables efficient and accurate web-enhanced question answering. All code and data are released!
 - **[2023.03.14]** We are happy to introduce [ChatGLM](https://chatglm.cn/blog), a bilingual dialogue language model based on GLM-130B, and its open-sourced version [ChatGLM-6B](https://github.com/THUDM/ChatGLM-6B) which can be run under only **6GB** GPU memory! 
 - **[2023.01.21]** GLM-130B has been accepted to [ICLR 2023](https://iclr.cc/Conferences/2023)!
 - **[2022.10.06]** Our [paper](http://arxiv.org/abs/2210.02414) for GLM-130B is out!
