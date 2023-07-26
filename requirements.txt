@@ -4,3 +4,4 @@ apex
 scipy
 dataclass_wizard
 cpm_kernels
+numpy==1.20.3
