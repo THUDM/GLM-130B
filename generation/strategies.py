@@ -3,6 +3,12 @@ import torch
 import torch.nn.functional as F
 from SwissArmyTransformer.generation.sampling_strategies.base_strategy import top_k_logits
 
+try:
+    np_bool = np.bool
+except AttributeError:  # np.__version__ >= '1.24.3'
+    np_bool = np.bool_
+
+
 class BaseStrategy:
     def __init__(self, batch_size, invalid_slices=[], temperature=1., top_k=200, eps=1e-4, top_p=0.0, end_tokens=None):
         self.batch_size = batch_size
@@ -14,7 +20,7 @@ class BaseStrategy:
         if end_tokens is None:
             end_tokens = []
         self.end_tokens = end_tokens
-        self._is_done = np.zeros(self.batch_size, dtype=np.bool)
+        self._is_done = np.zeros(self.batch_size, dtype=np_bool)
 
     @property
     def is_done(self) -> bool:
@@ -43,7 +49,7 @@ class BaseStrategy:
         return tokens, mems
 
     def finalize(self, tokens, mems):
-        self._is_done = np.zeros(self.batch_size, dtype=np.bool)
+        self._is_done = np.zeros(self.batch_size, dtype=np_bool)
         return tokens, mems
 
 
@@ -77,7 +83,7 @@ class BeamSearchStrategy:
         self.cached_beam_scores = 0  # [batch_size]
         self.cached_beam_ngram_bans = [[{} for _ in range(self.num_beams)] for _ in range(self.batch_size)]
         self.length_generated = 0
-        self._is_done = np.zeros(self.batch_size, dtype=np.bool)
+        self._is_done = np.zeros(self.batch_size, dtype=np_bool)
 
     def _add_end_beams(self, score, beam, batch_idx):
         score = score / ((5.0 + len(beam)) / 6) ** self.length_penalty  # Magic number for OpenNMT
